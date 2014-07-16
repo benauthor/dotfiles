@@ -1,0 +1,18 @@
+shell -$SHELL
+autodetach on
+startup_message off
+caption always "%{wk}c[_] %{rk}now screening---%{yk}*POW* %{bw} %w"
+#attrcolor b ".I"
+termcapinfo xterm ti@:te@
+#termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+#defbce "on"
+defscrollback 30000
+
+term "screen-256color"
+# terminfo and termcap for nice 256 color terminal
+# # allow bold colors - necessary for some reason
+attrcolor b ".I" 
+# # tell screen how to set colors. AB = background, AF=foreground 
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm' 
+# # erase background with current bg color 
+defbce "on" 
