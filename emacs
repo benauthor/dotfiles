@@ -12,36 +12,31 @@
 (load-theme 'solarized-dark t)
 
 (require 'rainbow-delimiters)
-(require 'evil)
-(require 'ido)
-(require 'smex)
-(require 'powerline)
-(require 'erc)
-;; (require 'flycheck)
+(require 'flycheck)
 (require 'midnight)
 (require 'column-marker)
-(require 'js-comint)
+;;(require 'js-comint) ;; for node.js
 (require 'lusty-explorer)
 (require 'zencoding-mode)
 (require 'yasnippet)
-(require 'cider)
-(load "~/.emacs.d/nxhtml/autostart.el")
+;; (require 'cider) ;; for clojure
+;; (load "~/.emacs.d/nxhtml/autostart.el")
 
-;;(setq inferior-lisp-program "/Users/bendere/local/bin/lein repl")
-;; (setq inferior-lisp-program "/Users/bendere/local/bin/clisp")
-(setq inferior-lisp-program "/Users/bendere/local/bin/sbcl")
-(add-to-list 'load-path "~/.emacs.d/slime")
-(require 'slime-autoloads)
-;;(setq slime-contribs '(slime-repl))
-(setq slime-contribs '(slime-fancy))
+;; ;;(setq inferior-lisp-program "/Users/bendere/local/bin/lein repl")
+;; ;; (setq inferior-lisp-program "/Users/bendere/local/bin/clisp")
+;; (setq inferior-lisp-program "/Users/bendere/local/bin/sbcl")
+;; (add-to-list 'load-path "~/.emacs.d/slime")
+;; (require 'slime-autoloads)
+;; ;;(setq slime-contribs '(slime-repl))
+;; (setq slime-contribs '(slime-fancy))
 
 (evil-mode 1)
 (ido-mode t)
 (yas-global-mode 1)
 
-(load "~/.emacs.d/evil-surround/surround.el")
-(require 'surround)
-(global-surround-mode 1)
+;; (load "~/.emacs.d/evil-surround/surround.el")
+;; (require 'surround)
+;; (global-surround-mode 1)
 
 (powerline-default-theme)
 (global-rainbow-delimiters-mode)
@@ -120,7 +115,9 @@
 ;;(evil-insert-state-map (kbd "jk") 'evil-next-line)
 ;;(key-chord-define evil-insert-state-map ",," 'evil-normal-state)
 
-
+;; very-evil-map
+;;
+;; maps all evil states at once to the same thing
 (defun very-evil-map (keys func)
   (define-key evil-normal-state-map keys func)
   (define-key evil-insert-state-map keys func)
@@ -152,7 +149,7 @@
 ;; behave in shell too
 (add-hook 'comint-mode-hook
           (lambda ()
-            (define-key comint-mode-map (kbd "C-n") 'next-buffer)
+           (define-key comint-mode-map (kbd "C-n") 'next-buffer)
             (define-key comint-mode-map (kbd "C-p") 'previous-buffer)
             ))
 ;; so when the buffer menu opens you are in it
@@ -196,8 +193,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (evil-define-key 'normal flycheck-mode-map (kbd "<M-n>") 'flycheck-next-error)
 ;;(very-evil-map "\M-p" 'flycheck-previous-error)
 ;; (evil-define-key 'normal flycheck-mode-map (kbd "<M-p>") 'flycheck-previous-error)
-(evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
-(evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
+;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
+;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 
@@ -207,7 +204,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;(global-set-key (kbd "C-x b") 'lusty-buffer-explorer)
 (global-set-key (kbd "C-x f") 'lusty-file-explorer)
 
-;; fix common :W typo
+;; ;; fix common :W typo
 (evil-ex-define-cmd "W[rite]" 'evil-write)
 
 
@@ -340,35 +337,35 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
 
-;; js-comint
-(setenv "NODE_NO_READLINE" "0")
-(setq inferior-js-program-command "node")
-(setq inferior-js-mode-hook
-      (lambda ()
-        ;; We like nice colors
-        (ansi-color-for-comint-mode-on)
-        ;; Deal with some prompt nonsense
-        (add-to-list
-         'comint-preoutput-filter-functions
-         (lambda (output)
-           (replace-regexp-in-string "\033\\[[0-9]+[GK]" "" output)))))
+;; ;; js-comint
+;; (setenv "NODE_NO_READLINE" "0")
+;; (setq inferior-js-program-command "node")
+;; (setq inferior-js-mode-hook
+;;       (lambda ()
+;;         ;; We like nice colors
+;;         (ansi-color-for-comint-mode-on)
+;;         ;; Deal with some prompt nonsense
+;;         (add-to-list
+;;          'comint-preoutput-filter-functions
+;;          (lambda (output)
+;;            (replace-regexp-in-string "\033\\[[0-9]+[GK]" "" output)))))
 
-;; multi-web-mode
-;; (require 'multi-web-mode)
-;; (setq mweb-default-major-mode 'html-mode)
-;;  (setq mweb-tags '((js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
-;;                    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
-;;  (setq mweb-filename-extensions '("php" "htm" "html"))
-;;  (multi-web-global-mode 1)
+;; ;; multi-web-mode
+;; ;; (require 'multi-web-mode)
+;; ;; (setq mweb-default-major-mode 'html-mode)
+;; ;;  (setq mweb-tags '((js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+;; ;;                    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+;; ;;  (setq mweb-filename-extensions '("php" "htm" "html"))
+;; ;;  (multi-web-global-mode 1)
 
-;; web-mode
-;; (load-file "~/.emacs.d/web-mode/web-mode.el")
-;; (require 'web-mode)
-;; (setq web-mode-css-indent-offset 4)
-;; (setq web-mode-code-indent-offset 4)
+;; ;; web-mode
+;; ;; (load-file "~/.emacs.d/web-mode/web-mode.el")
+;; ;; (require 'web-mode)
+;; ;; (setq web-mode-css-indent-offset 4)
+;; ;; (setq web-mode-code-indent-offset 4)
 
 (load-file "~/.emacs.d/dumbdent/dumbdent.el")
-(load-file "~/.emacs.d/python-flake8/python-flake8.el")
+;;(load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
 (very-evil-map [C-tab] 'dumbdent-line-or-region)
 (very-evil-map [S-tab] 'dumbdedent-line-or-region)
@@ -378,7 +375,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 (global-set-key (kbd "C-c C-c") 'switch-to-previous-buffer)
-(define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
+;; (define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
 
 ;; zencoding on markup modes
 ;; TODO this doesn't work on nxml?
@@ -392,18 +389,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq nxml-child-indent 4)
 
 ;; python
-(add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda () (define-key
                                          evil-insert-state-map
                                          (kbd "RET")
                                          'evil-ret)))
 
-(setq jedi:complete-on-dot t)
+;; (setq jedi:complete-on-dot t)
 
 
-;; shut up annoying mumamo warnings
-(when (and (>= emacs-major-version 24)
-           (>= emacs-minor-version 2))
-  (eval-after-load "mumamo"
-    '(setq mumamo-per-buffer-local-vars
-           (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
+;; ;; shut up annoying mumamo warnings
+;; (when (and (>= emacs-major-version 24)
+;;            (>= emacs-minor-version 2))
+;;   (eval-after-load "mumamo"
+;;     '(setq mumamo-per-buffer-local-vars
+;;            (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
