@@ -4,10 +4,10 @@ set nocompatible
 """Vundle"""
 "load vundle
 filetype off
-set rtp+=~/.vim/bundle/vundle/
+set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#rc()
 "let Vundle manage Vundle
-Bundle 'gmarik/vundle'
+Bundle 'gmarik/Vundle.vim'
 "My bundles here:
 Bundle 'scrooloose/syntastic'
 Bundle 'scrooloose/nerdtree'

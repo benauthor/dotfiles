@@ -3,6 +3,8 @@ alias ll='ls -lh'
 alias la='ls -lah'
 alias l='ls -CF'
 
+alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
+
 alias chrome='open -a Google\ Chrome'
 alias ff='open -a Firefox'
 

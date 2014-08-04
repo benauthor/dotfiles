@@ -14,10 +14,18 @@ export LSCOLORS=Bxfxcxdxdxegedabxgacad
 source ~/.git-completion.bash
 
 #powerline
+# function _update_ps1() {
+#    export PS1="$(~/local/powerline-bash/powerline-bash.py $?)"
+# }
+#
+# export PROMPT_COMMAND="_update_ps1"
+
 function _update_ps1() {
-   export PS1="$(~/local/powerline-bash/powerline-bash.py $?)"
+    export PS1="$(~/local/powerline-shell/powerline-shell.py --mode flat $? 2> /dev/null)"
 }
-export PROMPT_COMMAND="_update_ps1"
+
+export PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+
 #source ~/local/bash-powerline.sh
 
 #ARCHFLAGS so things can compile
