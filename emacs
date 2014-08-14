@@ -7,7 +7,7 @@
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 (package-initialize)
 ;; recompile .emacs.d on open
-;;(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
+;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
 (load-theme 'solarized-dark t)
 
@@ -15,6 +15,7 @@
 (require 'evil)
 (require 'ido)
 (require 'smex)
+(require 'tramp)
 (require 'powerline)
 ;; (require 'erc)
 ;; (require 'flycheck)
@@ -39,9 +40,8 @@
 (ido-mode t)
 (yas-global-mode 1)
 
-(load "~/.emacs.d/evil-surround/surround.el")
-(require 'surround)
-(global-surround-mode 1)
+(require 'evil-surround)
+(global-evil-surround-mode 1)
 
 (powerline-default-theme)
 (global-rainbow-delimiters-mode)
@@ -49,7 +49,7 @@
 (set-cursor-color "#fb0")
 (blink-cursor-mode 0)
 (tool-bar-mode -1)
-;; (add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'after-init-hook #'global-flycheck-mode)
 (add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
 (cua-mode t)
 (put 'upcase-region 'disabled nil)
@@ -59,6 +59,7 @@
 ;; (setq linum-format " %d ")
 (setq vc-follow-symlinks nil)
 
+(setq default-directory (concat (getenv "HOME") "/"))
 
 
 ;;;;;;;;;;;;; sane defaults
@@ -106,7 +107,7 @@
 ;; start size
 (setq default-frame-alist '(
                             (width . 140)
-                            (height . 50) ))
+                            (height . 42) ))
 
 ;;;;;;;;;;;;; habits
 ;; tramp
@@ -192,12 +193,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-|") 'split-window-horizontally)
 (global-set-key (kbd "C-\\") 'split-window-vertically)
 ;; flycheck
-;;(very-evil-map "\M-n" 'flycheck-next-error)
-;; (evil-define-key 'normal flycheck-mode-map (kbd "<M-n>") 'flycheck-next-error)
-;;(very-evil-map "\M-p" 'flycheck-previous-error)
-;; (evil-define-key 'normal flycheck-mode-map (kbd "<M-p>") 'flycheck-previous-error)
-(evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
-(evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
+(very-evil-map "\M-n" 'flycheck-next-error)
+(evil-define-key 'normal flycheck-mode-map (kbd "<M-n>") 'flycheck-next-error)
+(very-evil-map "\M-p" 'flycheck-previous-error)
+(evil-define-key 'normal flycheck-mode-map (kbd "<M-p>") 'flycheck-previous-error)
+;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
+;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 
@@ -378,7 +379,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 (global-set-key (kbd "C-c C-c") 'switch-to-previous-buffer)
-(define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
+;; (define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
 
 ;; zencoding on markup modes
 ;; TODO this doesn't work on nxml?
@@ -394,9 +395,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; python
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda () (define-key
-                                         evil-insert-state-map
-                                         (kbd "RET")
-                                         'evil-ret)))
+                                        evil-insert-state-map
+                                        (kbd "RET")
+                                        'evil-ret)))
 
 (setq jedi:complete-on-dot t)
 

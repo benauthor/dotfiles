@@ -20,8 +20,8 @@ alias status='git status'
 
 alias irc="irssi -c irc.usnews.com -n evan"
 alias tmux="TERM=screen-256color-bce tmux"
-alias screen="~/local/bin/screen"
 alias bitlbee="~/local/sbin/bitlbee -D"
+alias screen="/usr/local/Cellar/screen/4.0.3/bin/screen"
 
 alias startmysql="sudo mysqld_safe &"
 alias starttomcat="~/local/apache-tomcat-7.0.39/bin/startup.sh"

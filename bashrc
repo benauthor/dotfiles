@@ -11,7 +11,7 @@ export LSCOLORS=Bxfxcxdxdxegedabxgacad
 
 # git completion
 #source /etc/bash_completion.d/git
-source ~/.git-completion.bash
+source ~/local/git-completion.bash
 
 #powerline
 # function _update_ps1() {
