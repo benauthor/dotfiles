@@ -143,14 +143,21 @@
 (very-evil-map [end] 'move-end-of-line)
 (very-evil-map [next] 'way-down)
 (very-evil-map [prior] 'way-up)
+
+;; get back emacs behavior so i can learn...
+(very-evil-map "\C-b" 'evil-backward-char)
+(very-evil-map "\C-f" 'evil-forward-char)
+(very-evil-map "\C-n" 'evil-next-line)
+(very-evil-map "\C-p" 'evil-previous-line)
+
 ;; semicolon can do what colon does, this is nice
 ;;(define-key evil-normal-state-map ";" 'evil-ex)
 ;;;;(define-key evil-normal-state-map ";" 'evil-repeat-find-char)
 ;; buffer switching
-(global-set-key (kbd "C-n") 'next-buffer)
-(global-set-key (kbd "C-p") 'previous-buffer)
-(very-evil-map "\C-n" 'next-buffer)
-(very-evil-map "\C-p" 'previous-buffer)
+;; (global-set-key (kbd "C-n") 'next-buffer)
+;; (global-set-key (kbd "C-p") 'previous-buffer)
+;; (very-evil-map "\C-n" 'next-buffer)
+;; (very-evil-map "\C-p" 'previous-buffer)
 ;; behave in shell too
 (add-hook 'comint-mode-hook
           (lambda ()
