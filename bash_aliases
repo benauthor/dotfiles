@@ -28,3 +28,4 @@ alias starttomcat="~/local/apache-tomcat-7.0.39/bin/startup.sh"
 alias stoptomcat="~/local/apache-tomcat-7.0.39/bin/shutdown.sh"
 
 alias servehere="python -m SimpleHTTPServer 8181"
+

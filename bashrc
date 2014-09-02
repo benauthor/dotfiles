@@ -1,6 +1,7 @@
 # -*-Shell-Script-*-
 #path
-export PATH=/usr/texbin:~/local\ applications/Racket\ v6.0/bin/:~/usr/local/heroku/bin:~/local/bin/:~/.local/bin/:~/local/node/bin/:~/.rvm/bin:/usr/local/mysql/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin:$PATH
+# export PATH=/usr/texbin:~/local\ applications/Racket\ v6.0/bin/:~/usr/local/heroku/bin:~/local/bin/:~/.local/bin/:~/local/node/bin/:~/.rvm/bin:/usr/local/mysql/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin:$PATH
+export PATH=/usr/texbin:~/local\ applications/Racket\ v6.0/bin/:~/usr/local/heroku/bin:~/local/bin/:~/.local/bin/:~/local/node/bin/:/usr/local/mysql/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin:$PATH
 
 # history
 export HISTFILESIZE=3000
@@ -33,7 +34,7 @@ export ARCHFLAGS="-arch x86_64"
 
 # load nvm, rvm, pythonbrew
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh
-[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
+#[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
 # pythonbrew got abandoned
 [[ -s $HOME/.pythonbrew/etc/bashrc ]] && source $HOME/.pythonbrew/etc/bashrc
 
@@ -59,14 +60,9 @@ if [ -f ~/.bash_aliases ]; then
     source ~/.bash_aliases
 fi
 
-#purge the squid
-function purge() { for i in {1..2};
-                do squidclient -m PURGE -p 7000 -h
-                    ashcache$i.usnews.com "$@"; done ;
-                }
-
-function publichtml {
-    scp $1 sand1.usnews.com:~/public_html
+# ssh via the gateway
+s() {
+  ssh -t gateway ssh $*
 }
 
 export SVN_EDITOR=vim

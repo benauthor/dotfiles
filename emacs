@@ -39,6 +39,7 @@
 (evil-mode 1)
 (ido-mode t)
 (yas-global-mode 1)
+(tool-bar-mode 0)
 
 (require 'evil-surround)
 (global-evil-surround-mode 1)
@@ -408,3 +409,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (eval-after-load "mumamo"
     '(setq mumamo-per-buffer-local-vars
            (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
+
+
+;; util misc
+(defun kill-other-buffers ()
+      "Kill all other buffers."
+      (interactive)
+      (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
