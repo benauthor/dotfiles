@@ -7,6 +7,7 @@
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 (package-initialize)
 ;; recompile .emacs.d on open
+;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
 (load-theme 'solarized-dark t)
@@ -17,18 +18,16 @@
 (require 'smex)
 (require 'tramp)
 (require 'powerline)
-;; (require 'erc)
-;; (require 'flycheck)
+(require 'flycheck)
 (require 'midnight)
 (require 'column-marker)
-;; (require 'js-comint)
 (require 'lusty-explorer)
 (require 'zencoding-mode)
 (require 'yasnippet)
-;; (require 'cider)
-;; (load "~/.emacs.d/nxhtml/autostart.el")
+(require 'dirtree)
 
-;;(setq inferior-lisp-program "/Users/bendere/local/bin/lein repl")
+;; not really using any lisps right now.
+;; (setq inferior-lisp-program "/Users/bendere/local/bin/lein repl")
 ;; (setq inferior-lisp-program "/Users/bendere/local/bin/clisp")
 ;; (setq inferior-lisp-program "/Users/bendere/local/bin/sbcl")
 ;; (add-to-list 'load-path "~/.emacs.d/slime")
@@ -55,9 +54,6 @@
 (cua-mode t)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-;; (global-linum-mode 1)
-;; (fringe-mode 1)
-;; (setq linum-format " %d ")
 (setq vc-follow-symlinks nil)
 
 (setq default-directory (concat (getenv "HOME") "/"))
@@ -77,6 +73,8 @@
       kept-new-versions 5               ; newest versions to keep when a new numbered backup is made (default: 2)
       )
 (setq vc-make-backup-files t)
+;; (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq create-lockfiles nil)
 
 ;; put stuff on path so we can use it
 (defun set-exec-path-from-shell-PATH ()
@@ -230,54 +228,26 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (modify-syntax-entry ?* ". 23b" css-mode-syntax-table)
   (modify-syntax-entry ?\n ">" css-mode-syntax-table))
 (add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
+
+;; Vagrant is ruby
+(add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
+
 ;; markdown mode
 (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
 ;; js
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-;; pt gets highlighting
-(setq auto-mode-alist
-      (append '((".*\\.pt\\'" . xml-mode))
-              auto-mode-alist))
+
 ;; jsp
 (add-to-list 'auto-mode-alist '("\\.jsp$" . nxml-mode))
-;; pt
-(add-to-list 'auto-mode-alist '("\\.pt$" . nxml-mode))
+
 ;; clojure
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
+
 ;; clojurecript
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
-;; (add-hook 'cider-mode-hook
-;;           '(lambda ()
-;;              (define-key cider-mode-map "RET" 'cider-repl-return)))
-(evil-define-key 'normal clojure-mode-map (kbd "<C-return>") 'cider-eval-expression-at-point)
-(evil-define-key 'insert clojure-mode-map (kbd "<C-return>") 'cider-eval-expression-at-point)
-(evil-define-key 'visual clojure-mode-map (kbd "<C-return>") 'cider-eval-region)
-;(evil-define-key 'insert cider-repl-mode-map (kbd "<C-return>") 'cider-repl-return)
-;(evil-define-key 'insert cider-repl-mode-map (kbd "<return>") 'cider-repl-return)
-
-;; clojure
-(add-hook 'clojure-mode-hook
-          '(lambda ()
-             (define-key clojure-mode-map
-               "\C-c\C-e" '(lambda ()
-                             (interactive)
-                             (let ((curr (point)))
-                               (end-of-defun)
-                               (lisp-eval-last-sexp)
-                               (goto-char curr))))
-             (define-key clojure-mode-map
-               "\C-x\C-e" 'lisp-eval-last-sexp)
-             (define-key clojure-mode-map
-               "\C-c\C-r" 'lisp-eval-region)
-             (define-key clojure-mode-map
-               "\C-c\C-c" '(lambda ()
-                             (interactive)
-                             (lisp-eval-string (buffer-string))))
-             (define-key clojure-mode-map
-               "\C-c\C-z" 'run-lisp)))
-
 
 
 ;; completion
@@ -300,6 +270,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defadvice ansi-term (after advise-ansi-term-coding-system)
   (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
 (ad-activate 'ansi-term)
+
 ;; kill buffer if you kill the term process
 (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
   (if (memq (process-status proc) '(signal exit))
@@ -308,19 +279,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (kill-buffer buffer))
     ad-do-it))
 (ad-activate 'term-sentinel)
+
 ;; use bash
 (defvar my-term-shell "/bin/bash")
 (defadvice ansi-term (before force-bash)
   (interactive (list my-term-shell)))
 (ad-activate 'ansi-term)
-
-
-
-;; erc
-;;(erc-autojoin-mode t)
-;;(setq erc-autojoin-channels-alist
-;;  '(("irc.usnews.com" "#usnews")))
-
 
 
 ;;;;;;;;;;;;;; utility
@@ -349,36 +313,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
 
-;; js-comint
-(setenv "NODE_NO_READLINE" "0")
-(setq inferior-js-program-command "node")
-(setq inferior-js-mode-hook
-      (lambda ()
-        ;; We like nice colors
-        (ansi-color-for-comint-mode-on)
-        ;; Deal with some prompt nonsense
-        (add-to-list
-         'comint-preoutput-filter-functions
-         (lambda (output)
-           (replace-regexp-in-string "\033\\[[0-9]+[GK]" "" output)))))
-
-;; multi-web-mode
-;; (require 'multi-web-mode)
-;; (setq mweb-default-major-mode 'html-mode)
-;;  (setq mweb-tags '((js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
-;;                    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
-;;  (setq mweb-filename-extensions '("php" "htm" "html"))
-;;  (multi-web-global-mode 1)
-
-;; web-mode
-;; (load-file "~/.emacs.d/web-mode/web-mode.el")
-;; (require 'web-mode)
-;; (setq web-mode-css-indent-offset 4)
-;; (setq web-mode-code-indent-offset 4)
-
+;; indenting
 (load-file "~/.emacs.d/dumbdent/dumbdent.el")
-(load-file "~/.emacs.d/python-flake8/python-flake8.el")
-
 (very-evil-map [C-tab] 'dumbdent-line-or-region)
 (very-evil-map [S-tab] 'dumbdedent-line-or-region)
 
@@ -400,7 +336,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; might need to add this to a hook
 (setq nxml-child-indent 4)
 
+;; thrift mode indents 4
+(setq thrift-indent-level 4)
+
 ;; python
+(defun insert-pdb-trace ()
+  "Why spend your whole life typing?"
+  (interactive)
+  (insert "import ipdb;ipdb.set_trace()"))
+(very-evil-map (kbd "C-x p") 'insert-pdb-trace)
+
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda () (define-key
                                         evil-insert-state-map
@@ -408,7 +353,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                         'evil-ret)))
 
 (setq jedi:complete-on-dot t)
-
+(load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
 ;; shut up annoying mumamo warnings
 (when (and (>= emacs-major-version 24)
@@ -420,6 +365,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; util misc
 (defun kill-other-buffers ()
-      "Kill all other buffers."
-      (interactive)
-      (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
