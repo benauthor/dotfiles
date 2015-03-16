@@ -3,8 +3,8 @@
 
 (setq package-archives '(
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.org/packages/")
+                         ))
 (package-initialize)
 ;; recompile .emacs.d on open
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
@@ -29,16 +29,20 @@
 ;; not really using any lisps right now.
 ;; (setq inferior-lisp-program "/Users/bendere/local/bin/lein repl")
 ;; (setq inferior-lisp-program "/Users/bendere/local/bin/clisp")
-;; (setq inferior-lisp-program "/Users/bendere/local/bin/sbcl")
-;; (add-to-list 'load-path "~/.emacs.d/slime")
-;; (require 'slime-autoloads)
-;; (setq slime-contribs '(slime-repl))
-;; (setq slime-contribs '(slime-fancy))
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(add-to-list 'load-path "~/.emacs.d/slime")
+(require 'slime-autoloads)
+(setq slime-contribs '(slime-repl))
+(setq slime-contribs '(slime-fancy))
 
+(winner-mode 1)
 (evil-mode 1)
 (ido-mode t)
 (yas-global-mode 1)
 (tool-bar-mode 0)
+
+;; where am I?
+(which-function-mode)
 
 (require 'evil-surround)
 (global-evil-surround-mode 1)
@@ -62,6 +66,10 @@
 ;;;;;;;;;;;;; sane defaults
 ;; exec path
 ;;(setq exec-path (append exec-path '("/Users/bendere/local/bin" "/Users/bendere/.nvm/v0.10.15/bin")))
+
+(setq require-final-newline `visit-save)
+(setq mode-require-final-newline `visit-save)
+
 
 ;; backups
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
@@ -112,7 +120,9 @@
 ;; tramp
 (setq tramp-default-method "ssh")
 
-
+;;;;;; gateway
+;; (add-to-list 'tramp-default-proxies-alist
+;;              '("\\." nil "/ssh:evan@gateway.prclt.net:"))
 
 ;;;;;;;;;;;;;;; keybindings
 
@@ -165,7 +175,8 @@
 ;; so when the buffer menu opens you are in it
 (global-set-key (kbd "\C-x\C-b") 'buffer-menu-other-window)
 ;; move between windows with M-arrows
-(windmove-default-keybindings 'meta)
+;; (windmove-default-keybindings 'meta)
+(windmove-default-keybindings)
 ;;smex
 (global-set-key [(meta x)] 'smex)
 ;; when typing, return does nice indenting too
@@ -218,7 +229,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-ex-define-cmd "W[rite]" 'evil-write)
 
 
-
 ;;;;;;;;;;;;;; highlighting
 ;; a very basic scss mode
 (define-derived-mode scss-mode css-mode "SCSS"
@@ -249,6 +259,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; clojurecript
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 
+;; scala
+(require 'ensime)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 ;; completion
 (defun indent-or-complete ()
@@ -355,6 +368,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq jedi:complete-on-dot t)
 (load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
+
 ;; shut up annoying mumamo warnings
 (when (and (>= emacs-major-version 24)
            (>= emacs-minor-version 2))
@@ -368,3 +382,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   "Kill all other buffers."
   (interactive)
   (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+
+;; c
+(setq c-default-style "linux"
+      c-basic-offset 4)

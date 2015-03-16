@@ -9,24 +9,29 @@ call vundle#rc()
 "let Vundle manage Vundle
 Bundle 'gmarik/Vundle.vim'
 "My bundles here:
+Bundle 'kien/ctrlp.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'scrooloose/nerdtree'
 Bundle 'vim-scripts/HJKL'
-Bundle 'vim-scripts/VimClojure'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'plasticboy/vim-markdown'
-Bundle 'cakebaker/scss-syntax.vim'
-Bundle 'tpope/vim-haml'
+"Bundle 'tomtom/quickfixsigns_vim'
 Bundle 'tpope/vim-surround'
 Bundle 'mattn/emmet-vim'
-Bundle 'miripiruni/CSScomb-for-Vim.git'
 Bundle 'tomtom/tcomment_vim'
-Bundle 'kchmck/vim-coffee-script'
-"Bundle 'tomtom/quickfixsigns_vim'
+
+"Bundle 'miripiruni/CSScomb-for-Vim.git'
+"Bundle 'cakebaker/scss-syntax.vim'
+"Bundle 'tpope/vim-haml'
+"Bundle 'kchmck/vim-coffee-script'
+"Bundle 'vim-scripts/VimClojure'
 "
 "now we can turn filetype back on
 filetype plugin indent on
 
+"""ctlp"""
+let g:ctrlp_map = '<c-0>'
+let g:ctrlp_cmd = 'ctrlp'
 """Copypasta"""
 " toggle annoying clipboard behavior
 set clipboard=unnamed
@@ -74,9 +79,11 @@ inoremap <S-Tab> <C-D>
 vnoremap <Tab> >gv
 vnoremap <S-Tab> <gv
 
-"""Motion"""
-"map <PageDown> :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-D>:set scroll=0<CR>
-"map <PageUp> :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-U>:set scroll=0<CR>
+"""Splits"""
+set splitbelow
+set splitright
+"map <C-\> :sp<CR>
+map <C-\> :vsp<CR>
 
 """Screen info"""
 set ruler       " show line and column number
@@ -97,7 +104,7 @@ nmap <pagedown> 20j
 
 "why not use semicolon
 map ; :
-noremap ;; :
+noremap ;; ;
 
 "get here quick
 nmap <silent> <leader>ev :e $MYVIMRC<CR>
