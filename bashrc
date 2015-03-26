@@ -1,7 +1,7 @@
 # -*-Shell-Script-*-
 #path
 # export PATH=/usr/texbin:~/local\ applications/Racket\ v6.0/bin/:~/usr/local/heroku/bin:~/local/bin/:~/.local/bin/:~/local/node/bin/:~/.rvm/bin:/usr/local/mysql/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin:$PATH
-export PATH=/usr/texbin:~/local\ applications/Racket\ v6.0/bin/:~/usr/local/heroku/bin:~/local/bin/:~/.local/bin/:~/local/node/bin/:/usr/local/mysql/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin:$PATH
+export PATH=/usr/texbin:~/local\ applications/Racket\ v6.0/bin/:~/usr/local/heroku/bin:~/local/bin/:~/.local/bin/:~/local/node/bin/:/usr/local/mysql/bin:/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/bin:~/go/bin:$PATH
 
 # history
 export HISTFILESIZE=3000
@@ -68,10 +68,16 @@ s() {
 export SVN_EDITOR=vim
 
 # java oh java
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home
 
 # ummmm
 export URBIT_HOME=/Users/bendere/work/urbit/urb
 
 # for docker
-export DOCKER_HOST=tcp://localhost:4243
+#export DOCKER_HOST=tcp://localhost:4243
+export DOCKER_HOST=tcp://192.168.59.103:2376
+export DOCKER_CERT_PATH=/Users/evanbender/.boot2docker/certs/boot2docker-vm
+export DOCKER_TLS_VERIFY=1
+
+# go
+export GOPATH=$HOME/go

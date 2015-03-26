@@ -29,3 +29,5 @@ alias servehere="python -m SimpleHTTPServer 8181"
 
 alias redis-redeye="redis-cli -h 10.1.1.11 -p 6379"
 alias redis-melrose="redis-cli -h 10.1.1.12 -p 6379"
+
+alias ppjson="python -mjson.tool"
