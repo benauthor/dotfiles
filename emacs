@@ -6,70 +6,85 @@
                          ("melpa" . "http://melpa.org/packages/")
                          ))
 (package-initialize)
+
 ;; recompile .emacs.d on open
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
 (load-theme 'solarized-dark t)
 
-(require 'rainbow-delimiters)
 (require 'evil)
-(require 'ido)
-(require 'smex)
-(require 'tramp)
-(require 'powerline)
-(require 'flycheck)
-(require 'midnight)
-(require 'column-marker)
-(require 'lusty-explorer)
-(require 'zencoding-mode)
-(require 'yasnippet)
-(require 'dirtree)
+(evil-mode 1)
 
-;; not really using any lisps right now.
-;; (setq inferior-lisp-program "/Users/bendere/local/bin/lein repl")
-;; (setq inferior-lisp-program "/Users/bendere/local/bin/clisp")
+(require 'evil-surround)
+(global-evil-surround-mode 1)
+
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+(require 'ido)
+(ido-mode t)
+
+(require 'smex)
+(global-set-key [(meta x)] 'smex)
+
+(require 'tramp)
+(setq tramp-default-method "ssh")
+
+(require 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(require 'midnight)
+(setq clean-buffer-list-delay-general 1)
+
+(require 'column-marker)
+(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
+
+(require 'lusty-explorer)
+
+;; (require 'powerline)
+;; (powerline-default-theme)
+
+;; slime
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
 (add-to-list 'load-path "~/.emacs.d/slime")
 (require 'slime-autoloads)
 (setq slime-contribs '(slime-repl))
 (setq slime-contribs '(slime-fancy))
 
+;; window navigation
 (winner-mode 1)
-(evil-mode 1)
-(ido-mode t)
-(yas-global-mode 1)
-(tool-bar-mode 0)
 
 ;; where am I?
 (which-function-mode)
 
-(require 'evil-surround)
-(global-evil-surround-mode 1)
+;; toolbars
+(tool-bar-mode -1)
+(menu-bar-mode -1)
 
-(powerline-default-theme)
-(global-rainbow-delimiters-mode)
+;; cursors
 (setq evil-default-cursor t)
 (set-cursor-color "#fb0")
 (blink-cursor-mode 0)
-(tool-bar-mode -1)
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
+
+;; copy-paste
 (cua-mode t)
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(setq vc-follow-symlinks nil)
 
-(setq default-directory (concat (getenv "HOME") "/"))
-
-
-;;;;;;;;;;;;; sane defaults
-;; exec path
-;;(setq exec-path (append exec-path '("/Users/bendere/local/bin" "/Users/bendere/.nvm/v0.10.15/bin")))
-
+;; whitespace
+(setq-default show-trailing-whitespace t)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq require-final-newline `visit-save)
 (setq mode-require-final-newline `visit-save)
 
+;; enable disabled-by-default
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;; don't warn when following symbolic link to version controlled file
+(setq vc-follow-symlinks nil)
+
+;; default directory
+(setq default-directory (concat (getenv "HOME") "/"))
 
 ;; backups
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
@@ -81,7 +96,6 @@
       kept-new-versions 5               ; newest versions to keep when a new numbered backup is made (default: 2)
       )
 (setq vc-make-backup-files t)
-;; (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 (setq create-lockfiles nil)
 
 ;; put stuff on path so we can use it
@@ -93,20 +107,18 @@
           (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
-;; call function now
 (set-exec-path-from-shell-PATH)
 
 ;; turn off the welcome screen
 (setq inhibit-startup-message t)
 
-;; whitespace
-(setq-default show-trailing-whitespace t)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;;tabs
+;; tabs settings
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq tab-stop-list (number-sequence 4 80 4))
+
+;; indenting
+(load-file "~/.emacs.d/dumbdent/dumbdent.el")
 
 ;; turn off autosave
 (setq auto-save-default nil)
@@ -116,33 +128,26 @@
                             (width . 140)
                             (height . 42) ))
 
-;;;;;;;;;;;;; habits
-;; tramp
-(setq tramp-default-method "ssh")
-
-;;;;;; gateway
-;; (add-to-list 'tramp-default-proxies-alist
-;;              '("\\." nil "/ssh:evan@gateway.prclt.net:"))
 
 ;;;;;;;;;;;;;;; keybindings
 
-;; crazy idea
-;;(evil-insert-state-map (kbd "jk") 'evil-next-line)
-;;(key-chord-define evil-insert-state-map ",," 'evil-normal-state)
-
-
 (defun very-evil-map (keys func)
+  "define a keybinding for all evil modes"
   (define-key evil-normal-state-map keys func)
   (define-key evil-insert-state-map keys func)
   (define-key evil-visual-state-map keys func))
+
 (defun way-down () (interactive) (evil-next-line 15))
+
 (defun way-up () (interactive) (evil-previous-line 15))
+
 (defun iwb ()
   "indent whole buffer"
   (interactive)
   (delete-trailing-whitespace)
   (indent-region (point-min) (point-max) nil)
   (untabify (point-min) (point-max)))
+
 (global-set-key (kbd "C-=") 'iwb)
 (very-evil-map "\C-y" 'yank)
 (very-evil-map "\C-a" 'move-beginning-of-line)
@@ -158,37 +163,21 @@
 (very-evil-map "\C-n" 'evil-next-line)
 (very-evil-map "\C-p" 'evil-previous-line)
 
-;; semicolon can do what colon does, this is nice
-;;(define-key evil-normal-state-map ";" 'evil-ex)
-;;;;(define-key evil-normal-state-map ";" 'evil-repeat-find-char)
-;; buffer switching
-;; (global-set-key (kbd "C-n") 'next-buffer)
-;; (global-set-key (kbd "C-p") 'previous-buffer)
-;; (very-evil-map "\C-n" 'next-buffer)
-;; (very-evil-map "\C-p" 'previous-buffer)
-;; behave in shell too
-(add-hook 'comint-mode-hook
-          (lambda ()
-            (define-key comint-mode-map (kbd "C-n") 'next-buffer)
-            (define-key comint-mode-map (kbd "C-p") 'previous-buffer)
-            ))
 ;; so when the buffer menu opens you are in it
 (global-set-key (kbd "\C-x\C-b") 'buffer-menu-other-window)
+
 ;; move between windows with M-arrows
 ;; (windmove-default-keybindings 'meta)
 (windmove-default-keybindings)
-;;smex
-(global-set-key [(meta x)] 'smex)
+
 ;; when typing, return does nice indenting too
 ;; note to self: C-m == RET
 (define-key evil-insert-state-map (kbd "RET") 'reindent-then-newline-and-indent)
 
 ;; evil-nerd-comment
-
 (define-key evil-normal-state-map "\M-;" 'evilnc-comment-or-uncomment-lines)
 (define-key evil-visual-state-map "\M-;" 'evilnc-comment-or-uncomment-lines)
-;; kinda like screen
-;;(global-set-key (kbd "C-c C-c") 'ansi-term)
+
 ;; escape key gets you out of hell
 (defun minibuffer-keyboard-quit ()
   "Abort recursive edit.
@@ -206,9 +195,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-;; splits
+
+;; window splits
 (global-set-key (kbd "C-|") 'split-window-horizontally)
 (global-set-key (kbd "C-\\") 'split-window-vertically)
+
 ;; flycheck
 (very-evil-map "\M-n" 'flycheck-next-error)
 (evil-define-key 'normal flycheck-mode-map (kbd "<M-n>") 'flycheck-next-error)
@@ -221,15 +212,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; lustyexplorer
 (global-set-key (kbd "C-x C-b") 'lusty-buffer-explorer)
-;;(global-set-key (kbd "C-x C-f") 'lusty-file-explorer)
-;;(global-set-key (kbd "C-x b") 'lusty-buffer-explorer)
+(global-set-key (kbd "C-x C-f") 'lusty-file-explorer)
+(global-set-key (kbd "C-x b") 'lusty-buffer-explorer)
 (global-set-key (kbd "C-x f") 'lusty-file-explorer)
 
 ;; fix common :W typo
 (evil-ex-define-cmd "W[rite]" 'evil-write)
 
+;; dumbdenting
+(very-evil-map [C-tab] 'dumbdent-line-or-region)
+(very-evil-map [S-tab] 'dumbdedent-line-or-region)
 
-;;;;;;;;;;;;;; highlighting
+;;;;;;;;;;;;;; languages
+
 ;; a very basic scss mode
 (define-derived-mode scss-mode css-mode "SCSS"
   ;; Add the single-line comment syntax ('//', ends with newline)
@@ -255,15 +250,45 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; clojure
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-
-;; clojurecript
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
+(add-hook 'cider-mode-hook #'eldoc-mode)
+(setq nrepl-log-messages t)
 
 ;; scala
 (require 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
-;; completion
+;; thrift mode indents 4
+(setq thrift-indent-level 4)
+
+;; indent in html/xml/templates
+;;(setq sgml-basic-offset 4)
+;; might need to add this to a hook
+;; (setq nxml-child-indent 4)
+
+;; python
+(defun insert-pdb-trace ()
+  "Why spend your whole life typing?"
+  (interactive)
+  (insert "import ipdb;ipdb.set_trace()"))
+(very-evil-map (kbd "C-x p") 'insert-pdb-trace)
+
+(add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook (lambda () (define-key
+                                        evil-insert-state-map
+                                        (kbd "RET")
+                                        'evil-ret)))
+
+(setq jedi:complete-on-dot t)
+(load-file "~/.emacs.d/python-flake8/python-flake8.el")
+
+;; c
+(setq c-default-style "linux"
+      c-basic-offset 4)
+
+
+;;;;;;;;;;;;;;;;;;;;;; completion
+
 (defun indent-or-complete ()
   "Complete if point is at end of a word, otherwise indent line."
   (interactive)
@@ -306,11 +331,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (interactive)
   (occur "[^[:ascii:]]"))
 
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+(defun switch-to-previous-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+(global-set-key (kbd "C-c C-c") 'switch-to-previous-buffer) ;; like screen
+;; (define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
 
 
 ;;;;;;;;;;;;; tidyness
-;; midnight-mode: 1 day
-(setq clean-buffer-list-delay-general 1)
 (defun bury-compile-buffer-if-successful (buffer string)
   "Bury a compilation buffer if succeeded without warnings "
   (if (and
@@ -325,65 +358,3 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                         (switch-to-prev-buffer (get-buffer-window buf) 'kill))
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
-
-;; indenting
-(load-file "~/.emacs.d/dumbdent/dumbdent.el")
-(very-evil-map [C-tab] 'dumbdent-line-or-region)
-(very-evil-map [S-tab] 'dumbdedent-line-or-region)
-
-;; buffer switch
-(defun switch-to-previous-buffer ()
-  (interactive)
-  (switch-to-buffer (other-buffer (current-buffer) 1)))
-(global-set-key (kbd "C-c C-c") 'switch-to-previous-buffer)
-;; (define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
-
-;; zencoding on markup modes
-;; TODO this doesn't work on nxml?
-(add-hook 'sgml-mode-hook 'zencoding-mode)
-(add-hook 'xml-mode-hook 'zencoding-mode)
-(add-hook 'nxml-mode-hook 'zencoding-mode)
-
-;; indent in html/xml/templates
-;;(setq sgml-basic-offset 4)
-;; might need to add this to a hook
-(setq nxml-child-indent 4)
-
-;; thrift mode indents 4
-(setq thrift-indent-level 4)
-
-;; python
-(defun insert-pdb-trace ()
-  "Why spend your whole life typing?"
-  (interactive)
-  (insert "import ipdb;ipdb.set_trace()"))
-(very-evil-map (kbd "C-x p") 'insert-pdb-trace)
-
-(add-hook 'python-mode-hook 'jedi:setup)
-(add-hook 'python-mode-hook (lambda () (define-key
-                                        evil-insert-state-map
-                                        (kbd "RET")
-                                        'evil-ret)))
-
-(setq jedi:complete-on-dot t)
-(load-file "~/.emacs.d/python-flake8/python-flake8.el")
-
-
-;; shut up annoying mumamo warnings
-(when (and (>= emacs-major-version 24)
-           (>= emacs-minor-version 2))
-  (eval-after-load "mumamo"
-    '(setq mumamo-per-buffer-local-vars
-           (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
-
-
-;; util misc
-(defun kill-other-buffers ()
-  "Kill all other buffers."
-  (interactive)
-  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
-
-
-;; c
-(setq c-default-style "linux"
-      c-basic-offset 4)
