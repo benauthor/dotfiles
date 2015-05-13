@@ -42,8 +42,8 @@
 
 (require 'lusty-explorer)
 
-;; (require 'powerline)
-;; (powerline-default-theme)
+(require 'powerline)
+(powerline-default-theme)
 
 ;; slime
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
@@ -51,6 +51,11 @@
 (require 'slime-autoloads)
 (setq slime-contribs '(slime-repl))
 (setq slime-contribs '(slime-fancy))
+
+;; magit
+(require 'magit)
+(setq magit-auto-revert-mode nil)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; window navigation
 (winner-mode 1)
@@ -212,8 +217,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; lustyexplorer
 (global-set-key (kbd "C-x C-b") 'lusty-buffer-explorer)
-(global-set-key (kbd "C-x C-f") 'lusty-file-explorer)
-(global-set-key (kbd "C-x b") 'lusty-buffer-explorer)
+;; (global-set-key (kbd "C-x C-f") 'lusty-file-explorer)
+;; (global-set-key (kbd "C-x b") 'lusty-buffer-explorer)
 (global-set-key (kbd "C-x f") 'lusty-file-explorer)
 
 ;; fix common :W typo

@@ -48,13 +48,13 @@ if [ ! -d ~/local/powerline-shell ]
 then
     echo 'cloning powerline-shell'
     git clone git@code.usnews.com:bendere/powerline-shell.git ~/local/powerline-shell
-#    python ~/local/bin/virtualenv.py -ppython2.6 ~/local/powerline-shell/venv 
+#    python ~/local/bin/virtualenv.py -ppython2.6 ~/local/powerline-shell/venv
     #powerline needs python2.6+ with argparse
     virtualenv --setuptools -ppython2.6 ~/local/powerline-shell/venv
     ~/local/powerline-shell/venv/bin/pip install argparse
 fi
 
-dotfiles=( vimrc bashrc screenrc emacs profile bash_aliases )
+dotfiles=( vimrc bashrc screenrc emacs profile bash_aliases tmux.conf )
 for file in ${dotfiles[@]}
 do
     dotted=.$file
@@ -63,8 +63,8 @@ do
         echo Backing up $dotted to $file.old
         mv $dotted $file.old
     fi
-    echo linking ~/mydotfiles/$file to $dotted
-    ln -s ~/my-dotfiles/$file $dotted
+    echo linking ~/dotfiles/$file to $dotted
+    ln -s ~/dotfiles/$file $dotted
 done
 
 # get dependencies
