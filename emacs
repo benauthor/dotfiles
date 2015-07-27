@@ -40,8 +40,6 @@
 (require 'column-marker)
 (add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
-(require 'lusty-explorer)
-
 (require 'powerline)
 (powerline-default-theme)
 
@@ -168,9 +166,6 @@
 (very-evil-map "\C-n" 'evil-next-line)
 (very-evil-map "\C-p" 'evil-previous-line)
 
-;; so when the buffer menu opens you are in it
-(global-set-key (kbd "\C-x\C-b") 'buffer-menu-other-window)
-
 ;; move between windows with M-arrows
 ;; (windmove-default-keybindings 'meta)
 (windmove-default-keybindings)
@@ -206,20 +201,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-\\") 'split-window-vertically)
 
 ;; flycheck
-(very-evil-map "\M-n" 'flycheck-next-error)
-(evil-define-key 'normal flycheck-mode-map (kbd "<M-n>") 'flycheck-next-error)
-(very-evil-map "\M-p" 'flycheck-previous-error)
-(evil-define-key 'normal flycheck-mode-map (kbd "<M-p>") 'flycheck-previous-error)
+(very-evil-map "\M-N" 'flycheck-next-error)
+(evil-define-key 'normal flycheck-mode-map (kbd "<M-N>") 'flycheck-next-error)
+(very-evil-map "\M-P" 'flycheck-previous-error)
+(evil-define-key 'normal flycheck-mode-map (kbd "<M-N>") 'flycheck-previous-error)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 
-;; lustyexplorer
-(global-set-key (kbd "C-x C-b") 'lusty-buffer-explorer)
-;; (global-set-key (kbd "C-x C-f") 'lusty-file-explorer)
-;; (global-set-key (kbd "C-x b") 'lusty-buffer-explorer)
-(global-set-key (kbd "C-x f") 'lusty-file-explorer)
+;; buffer switching
+(global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
+(global-set-key (kbd "C-k") 'evil-switch-to-windows-last-buffer)
+;; (very-evil-map "\M-n" 'next-buffer)
+;; (very-evil-map "\M-p" 'previous-buffer)
 
 ;; fix common :W typo
 (evil-ex-define-cmd "W[rite]" 'evil-write)
@@ -290,6 +285,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; c
 (setq c-default-style "linux"
       c-basic-offset 4)
+
+;; json
+(setq json-reformat:pretty-string? t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
