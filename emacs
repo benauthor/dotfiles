@@ -270,6 +270,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defun insert-pdb-trace ()
   "Why spend your whole life typing?"
   (interactive)
+  ;; (insert "import pdb;pdb.set_trace()"))
   (insert "import ipdb;ipdb.set_trace()"))
 (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
 
@@ -289,6 +290,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; json
 (setq json-reformat:pretty-string? t)
 
+;; go
+(setenv "GOPATH" "/Users/evanbender/go")
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
 
@@ -361,3 +364,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                         (switch-to-prev-buffer (get-buffer-window buf) 'kill))
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(frame-background-mode nil)
+ '(magit-use-overlays nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
