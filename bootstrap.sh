@@ -1,7 +1,7 @@
 #!/bin/sh
 
 shopt -s dotglob
-BRANCH=debian
+BRANCH=osx
 echo my-dotfiles bootstrap for $BRANCH systems
 cd ~
 
@@ -19,21 +19,12 @@ ensure_dir () {
 ensure_dir ~/public_html
 ensure_dir ~/local
 ensure_dir ~/local/bin
-ensure_dir ~/.vim
-ensure_dir ~/.vim/bundle
 
 #get my-dotfiles repo
-if [ ! -d ~/my-dotfiles ]
+if [ ! -d ~/dotfiles ]
 then
     echo 'cloning dotfiles'
-    git clone -b $BRANCH git@code.usnews.com:bendere/my-dotfiles.git ~/my-dotfiles
-fi
-
-#get vundle
-if [ ! -d ~/.vim/bundle/vundle ]
-then
-    echo 'cloning vundle'
-    git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+    git clone -b $BRANCH git@github.com:benauthor/dotfiles.git
 fi
 
 # get virtualenv
@@ -43,18 +34,15 @@ fi
 #    mv virtualenv.py ~/local/bin/virtualenv.py
 #fi
 
-#get powerline
+# get powerline
 if [ ! -d ~/local/powerline-shell ]
 then
     echo 'cloning powerline-shell'
-    git clone git@code.usnews.com:bendere/powerline-shell.git ~/local/powerline-shell
-#    python ~/local/bin/virtualenv.py -ppython2.6 ~/local/powerline-shell/venv
-    #powerline needs python2.6+ with argparse
-    virtualenv --setuptools -ppython2.6 ~/local/powerline-shell/venv
-    ~/local/powerline-shell/venv/bin/pip install argparse
+    git clone https://github.com/milkbikis/powerline-shell ~/local/powerline-shell
+    ~/local/powerline-shell/install.py
 fi
 
-dotfiles=( vimrc bashrc screenrc emacs profile bash_aliases tmux.conf )
+dotfiles=( vimrc bashrc screenrc emacs profile bash_aliases tmux.conf gitignore )
 for file in ${dotfiles[@]}
 do
     dotted=.$file
@@ -66,8 +54,3 @@ do
     echo linking ~/dotfiles/$file to $dotted
     ln -s ~/dotfiles/$file $dotted
 done
-
-# get dependencies
-# node
-# jslint
-# etc...

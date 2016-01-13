@@ -1,4 +1,0 @@
-# add custom pip packages here to be installed automatically by CFEngine
-
-ipdb
-werkzeug

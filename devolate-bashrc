@@ -1,9 +1,0 @@
-
-export EVAN=cool
-
-# aliases
-alias nukedb='perc db reload --datagen --only-users'
-alias st="git status"
-alias cron-sendtask='/usr/bin/python -c "from apps.notifications import send; send()"'
-alias la="ls -lah"
-alias celery-fg="/usr/local/bin/run_with_env /usr/local/bin/celery worker --without-gossip --without-heartbeat --without-mingle"
