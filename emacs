@@ -23,7 +23,21 @@
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 (require 'ido)
-(ido-mode t)
+(require 'flx-ido)
+(require 'ido-vertical-mode)
+(ido-mode 1)
+(flx-ido-mode 1)
+(setq ido-enable-flex-matching t)
+(set-face-attribute 'ido-vertical-first-match-face nil
+                    :background "#073642"
+                    :foreground "#b58900")
+(set-face-attribute 'ido-vertical-only-match-face nil
+                    :background "#dc322f"
+                    :foreground "#b58900")
+(set-face-attribute 'ido-vertical-match-face nil
+                    :foreground "#b58900")
+(ido-vertical-mode 1)
+(setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
 
 (require 'smex)
 (global-set-key [(meta x)] 'smex)
