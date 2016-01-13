@@ -44,11 +44,13 @@
 (powerline-default-theme)
 
 ;; slime
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
-(add-to-list 'load-path "~/.emacs.d/slime")
-(require 'slime-autoloads)
-(setq slime-contribs '(slime-repl))
-(setq slime-contribs '(slime-fancy))
+(require 'slime)
+;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
+(setq inferior-lisp-program "/usr/local/bin/ccl64 -K utf-8")
+(setq slime-net-coding-system 'utf-8-unix)
+(slime-setup '(slime-fancy))
+;; ?
+;; (require 'slime-autoloads)
 
 ;; magit
 (require 'magit)
@@ -253,6 +255,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 (add-hook 'cider-mode-hook #'eldoc-mode)
 (setq nrepl-log-messages t)
+
+;; scheme/racket
+(add-to-list 'auto-mode-alist '("\\.scm$" . scheme-mode))
+(add-to-list 'auto-mode-alist '("\\.sch$" . scheme-mode))
+(add-to-list 'auto-mode-alist '("\\.rkt$" . scheme-mode))
 
 ;; scala
 (require 'ensime)

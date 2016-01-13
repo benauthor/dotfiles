@@ -31,3 +31,5 @@ alias redis-redeye="redis-cli -h 10.1.1.11 -p 6379"
 alias redis-melrose="redis-cli -h 10.1.1.12 -p 6379"
 
 alias ppjson="python -mjson.tool"
+alias sbcl="rlwrap sbcl"
+alias ccl="rlwrap ccl64"
