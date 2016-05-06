@@ -269,6 +269,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 (add-hook 'cider-mode-hook #'eldoc-mode)
 (setq nrepl-log-messages t)
+(eval-after-load 'flycheck '(flycheck-clojure-setup))
+(add-hook 'cider-mode-hook
+  (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
 ;; scheme/racket
 (add-to-list 'auto-mode-alist '("\\.scm$" . scheme-mode))
@@ -302,6 +305,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                         'evil-ret)))
 
 (setq jedi:complete-on-dot t)
+(setq jedi:get-in-function-call-delay 200)
 (load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
 ;; c
@@ -369,6 +373,23 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-c C-c") 'switch-to-previous-buffer) ;; like screen
 ;; (define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
 
+
+(defun multiline-it ()
+  (interactive)
+  ;; narrow to region around current line
+  (end-of-line)
+  (set-mark-command nil)
+  (beginning-of-line)
+  (narrow-to-region (mark) (point))
+  ;; replace in region
+  (replace-string ", " ",\n")
+  ;; indent in region
+  (beginning-of-buffer)
+  (set-mark-command nil)
+  (end-of-buffer)
+  (indent-region (mark) (point))
+  ;; back to normal
+  (widen))
 
 ;;;;;;;;;;;;; tidyness
 (defun bury-compile-buffer-if-successful (buffer string)
