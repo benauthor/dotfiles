@@ -11,7 +11,8 @@
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
-(load-theme 'solarized-dark t)
+(load-theme 'solarized-light t)
+;; (load-theme 'solarized-dark t)
 
 (require 'evil)
 (evil-mode 1)
@@ -176,6 +177,10 @@
 (very-evil-map [next] 'way-down)
 (very-evil-map [prior] 'way-up)
 
+;; stop foot-shooting with evil-downcase
+(define-key evil-normal-state-map "gu" nil)
+(define-key evil-normal-state-map "gd" 'evil-downcase)
+
 ;; get back emacs behavior so i can learn...
 (very-evil-map "\C-b" 'evil-backward-char)
 (very-evil-map "\C-f" 'evil-forward-char)
@@ -258,6 +263,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
+;; yaml/raml
+(add-to-list 'auto-mode-alist '("\\.raml$" . yaml-mode))
+(add-hook 'yaml-mode-hook (lambda () (setq tab-width 2)))
+
 ;; js
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
@@ -298,11 +307,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (insert "import ipdb;ipdb.set_trace()"))
 (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
 
+(add-hook 'python-mode-hook (lambda () (setq tab-width 4)))
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda () (define-key
                                         evil-insert-state-map
                                         (kbd "RET")
                                         'evil-ret)))
+(require 'py-isort)
 
 (setq jedi:complete-on-dot t)
 (setq jedi:get-in-function-call-delay 200)
@@ -317,6 +328,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; go
 (setenv "GOPATH" "/Users/evanbender/go")
+;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
+
+;; java
+;; eclim
+;; (require 'eclim)
+;; (require 'eclimd)
+;; (global-eclim-mode)
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+;; (require 'ac-emacs-eclim-source)
+;; (ac-emacs-eclim-config)
+;; (custom-set-variables
+;;   '(eclim-eclipse-dirs '("/Applications/Eclipse.app/Contents/Eclipse/"))
+;;   '(eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"))
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
 
@@ -411,6 +436,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
  '(frame-background-mode nil)
  '(magit-use-overlays nil))
 (custom-set-faces
@@ -419,3 +447,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(defun increment-number-at-point ()
+  (interactive)
+  (skip-chars-backward "0-9")
+  (or (looking-at "[0-9]+")
+      (error "No number at point"))
+  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))

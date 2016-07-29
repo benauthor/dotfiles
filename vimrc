@@ -19,13 +19,8 @@ Bundle 'plasticboy/vim-markdown'
 Bundle 'tpope/vim-surround'
 Bundle 'mattn/emmet-vim'
 Bundle 'tomtom/tcomment_vim'
+Bundle 'Townk/vim-autoclose'
 
-"Bundle 'miripiruni/CSScomb-for-Vim.git'
-"Bundle 'cakebaker/scss-syntax.vim'
-"Bundle 'tpope/vim-haml'
-"Bundle 'kchmck/vim-coffee-script'
-"Bundle 'vim-scripts/VimClojure'
-"
 "now we can turn filetype back on
 filetype plugin indent on
 

@@ -65,7 +65,7 @@ export GOPATH=$HOME/go
 export GO15VENDOREXPERIMENT=1
 
 # devolate
-export VM_MEMORY=4500
+export VM_MEMORY=5000
 
 export DOCKER_MACHINE_NAME=default
 
@@ -82,4 +82,13 @@ prepare_docker() {
 export LIBRARY_PATH=/usr/local/lib/:$LIBRARY_PATH
 export CPATH=/usr/local/include/:$CPATH
 
+# java
+export ECLIPSE_HOME=/Applications/Eclipse.app/Contents/Eclipse/
 export GRADLE_HOME=/usr/local/Cellar/gradle/2.3/libexec
+
+#
+export DYLD_LIBRARY_PATH=/usr/local/opt/openssl/lib:$DYLD_LIBRARY_PATH
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+. "$(brew --prefix nvm)/nvm.sh"
