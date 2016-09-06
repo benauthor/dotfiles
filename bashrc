@@ -9,13 +9,37 @@ export HISTFILESIZE=3000
 export CLICOLOR=1
 export LSCOLORS=Bxfxcxdxdxegedabxgacad
 
-# git completion
-source ~/local/git-completion.bash
+# git
+source /usr/local/etc/bash_completion.d/git-completion.bash
+source /usr/local/etc/bash_completion.d/git-prompt.sh
 
-function _update_ps1() {
-    export PS1="$(~/local/powerline-shell/powerline-shell.py --mode patched $? 2> /dev/null)"
-}
+# function _update_ps1() {
+#     export PS1="$(~/local/powerline-shell/powerline-shell.py --mode patched $? 2> /dev/null)"
+# }
 # export PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+
+__prompt_command() {
+    local EXIT="$?"             # This needs to be first
+    PS1=""
+
+    local RCol='\[\e[0m\]'
+
+    local Red='\[\e[0;31m\]'
+    local Blu='\[\e[0;34m\]'
+    # local DimLBlu='\[\e[2;34m\]'
+    local LBlu='\[\e[0;94m\]'
+    local LCy='\[\e[0;96m\]'
+
+    PS1+="${LCy}\u@\h:${LBlu}\W${Blu}$(__git_ps1)"
+
+
+    if [ $EXIT != 0 ]; then
+        PS1+="${Red}$ ${RCol}"      # Add red if exit code non 0
+    else
+        PS1+="${LCy}$ ${RCol}"
+    fi
+}
+PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
 # let screen see current dir
 if [ "$TERM" = "screen" ]; then
