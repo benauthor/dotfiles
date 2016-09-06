@@ -6,7 +6,7 @@ alias l='ls -CF'
 alias chrome='open -a Google\ Chrome'
 alias ff='open -a Firefox'
 
-# alias python='python3'
+alias python='python3'
 alias gitk='gitx'
 alias gitg='git log --pretty=format:"%h|%an|%s" --graph'
 alias cached='git diff --cached'

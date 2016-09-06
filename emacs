@@ -327,7 +327,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq json-reformat:pretty-string? t)
 
 ;; go
+(setq gofmt-command "goimports")
 (setenv "GOPATH" "/Users/evanbender/go")
+;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
 ;; java
