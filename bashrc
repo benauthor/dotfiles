@@ -12,11 +12,7 @@ export LSCOLORS=Bxfxcxdxdxegedabxgacad
 # git
 source /usr/local/etc/bash_completion.d/git-completion.bash
 source /usr/local/etc/bash_completion.d/git-prompt.sh
-
-# function _update_ps1() {
-#     export PS1="$(~/local/powerline-shell/powerline-shell.py --mode patched $? 2> /dev/null)"
-# }
-# export PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+export GIT_PS1_SHOWDIRTYSTATE=1
 
 __prompt_command() {
     local EXIT="$?"             # This needs to be first
@@ -26,11 +22,10 @@ __prompt_command() {
 
     local Red='\[\e[0;31m\]'
     local Blu='\[\e[0;34m\]'
-    # local DimLBlu='\[\e[2;34m\]'
     local LBlu='\[\e[0;94m\]'
     local LCy='\[\e[0;96m\]'
 
-    PS1+="${LCy}\u@\h:${LBlu}\W${Blu}$(__git_ps1)"
+    PS1+="${LCy}\u@local:${LBlu}\W${Blu}$(__git_ps1)"
 
 
     if [ $EXIT != 0 ]; then
@@ -93,7 +88,3 @@ export ARCHFLAGS="-arch x86_64"
 export LIBRARY_PATH=/usr/local/lib/:$LIBRARY_PATH
 export CPATH=/usr/local/include/:$CPATH
 export DYLD_LIBRARY_PATH=/usr/local/opt/openssl/lib:$DYLD_LIBRARY_PATH
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-source "$(brew --prefix nvm)/nvm.sh"
