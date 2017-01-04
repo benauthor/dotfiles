@@ -1,6 +1,6 @@
 # -*-Shell-Script-*-
 #path
-export PATH=~/local/bin/:~/.local/bin/:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/bin:~/go/bin:/Library/TeX/texbin:$PATH
+export PATH=~/local/bin/:~/.local/bin/:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/bin:~/go/bin:/Library/TeX/texbin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/2.7/bin:$PATH
 
 # history
 export HISTFILESIZE=3000
@@ -25,7 +25,7 @@ __prompt_command() {
     local LBlu='\[\e[0;94m\]'
     local LCy='\[\e[0;96m\]'
 
-    PS1+="${LCy}\u@local:${LBlu}\W${Blu}$(__git_ps1)"
+    PS1+="${LCy}\u@\h:${LBlu}\W${Blu}$(__git_ps1)"
 
 
     if [ $EXIT != 0 ]; then
@@ -60,7 +60,7 @@ s() {
   ssh -t gateway ssh $*
 }
 # devolate
-export VM_MEMORY=5000
+export VM_MEMORY=4000
 
 # java
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home

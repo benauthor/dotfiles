@@ -418,6 +418,29 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ;; back to normal
   (widen))
 
+(defun multiline-def ()
+  (interactive)
+  ;; narrow to region around current line
+  (end-of-line)
+  (set-mark-command nil)
+  (beginning-of-line)
+  (narrow-to-region (mark) (point))
+  ;; replace in region
+  ;; this is a littly janky as each replace
+  ;; leaves mark at last occurence, but as long
+  ;; as the order of these is right it works. :shrug:
+  (replace-string "(" "(\n")
+  (replace-string ", " ",\n")
+  (replace-string ")" ",\n)")
+  ;; indent in region
+  (beginning-of-buffer)
+  (set-mark-command nil)
+  (end-of-buffer)
+  (indent-region (mark) (point))
+  ;; back to normal
+  (widen))
+
+
 ;;;;;;;;;;;;; tidyness
 (defun bury-compile-buffer-if-successful (buffer string)
   "Bury a compilation buffer if succeeded without warnings "
