@@ -23,6 +23,8 @@
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+(smartparens-global-mode 1)
+
 (require 'ido)
 (require 'flx-ido)
 (require 'ido-vertical-mode)
@@ -344,18 +346,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (custom-set-variables
 ;;   '(eclim-eclipse-dirs '("/Applications/Eclipse.app/Contents/Eclipse/"))
 ;;   '(eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"))
+(require 'eclim)
+(setq eclimd-autostart t)
+(global-eclim-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
 
+(add-hook 'after-init-hook 'global-company-mode)
 (defun indent-or-complete ()
   "Complete if point is at end of a word, otherwise indent line."
   (interactive)
   (if (looking-at "\\>")
       (dabbrev-expand nil)
       ;;(completion-at-point)
+      ;; (company-complete)
     (indent-for-tab-command)
     ))
 (define-key evil-insert-state-map [tab] 'indent-or-complete)
+;; (define-key evil-insert-state-map [tab] 'company-complete)
+;; (define-key evil-insert-state-map [C-tab] 'indent-for-tab-command)
 
 ;; TODO fuck around with hippie-expand, seems promising
 (global-set-key "\M-/" 'hippie-expand)
