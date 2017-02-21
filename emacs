@@ -14,6 +14,9 @@
 (load-theme 'solarized-light t)
 ;; (load-theme 'solarized-dark t)
 
+;; don't warn when following symbolic link to version controlled file
+(setq vc-follow-symlinks nil)
+
 (require 'evil)
 (evil-mode 1)
 
@@ -51,8 +54,8 @@
 (require 'flycheck)
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(require 'midnight)
-(setq clean-buffer-list-delay-general 1)
+;;(require 'midnight)
+;;(setq clean-buffer-list-delay-general 1)
 
 (require 'column-marker)
 (add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
@@ -70,9 +73,9 @@
 ;; (require 'slime-autoloads)
 
 ;; magit
-(require 'magit)
-(setq magit-auto-revert-mode nil)
-(setq magit-last-seen-setup-instructions "1.4.0")
+;; (require 'magit)
+;; (setq magit-auto-revert-mode nil)
+;; (setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; window navigation
 (winner-mode 1)
@@ -91,6 +94,8 @@
 
 ;; copy-paste
 (cua-mode t)
+(setq x-select-enable-clipboard t)
+(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 ;; whitespace
 (setq-default show-trailing-whitespace t)
@@ -102,8 +107,6 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-;; don't warn when following symbolic link to version controlled file
-(setq vc-follow-symlinks nil)
 
 ;; default directory
 (setq default-directory (concat (getenv "HOME") "/"))
@@ -140,7 +143,7 @@
 (setq tab-stop-list (number-sequence 4 80 4))
 
 ;; indenting
-(load-file "~/.emacs.d/dumbdent/dumbdent.el")
+;; (load-file "~/.emacs.d/dumbdent/dumbdent.el")
 
 ;; turn off autosave
 (setq auto-save-default nil)
@@ -248,15 +251,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;;;;;;;;;;;;;; languages
 
-;; a very basic scss mode
-(define-derived-mode scss-mode css-mode "SCSS"
-  ;; Add the single-line comment syntax ('//', ends with newline)
-  ;; as comment style 'b' (see "Syntax Flags" in elisp manual)
-  (modify-syntax-entry ?/ ". 124" css-mode-syntax-table)
-  (modify-syntax-entry ?* ". 23b" css-mode-syntax-table)
-  (modify-syntax-entry ?\n ">" css-mode-syntax-table))
-(add-to-list 'auto-mode-alist '("\\.scss" . scss-mode))
-
 ;; Vagrant is ruby
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
 
@@ -284,18 +278,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-hook 'cider-mode-hook
   (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
-;; scheme/racket
-(add-to-list 'auto-mode-alist '("\\.scm$" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.sch$" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.rkt$" . scheme-mode))
-
-;; scala
-(require 'ensime)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-
-;; thrift mode indents 4
-(setq thrift-indent-level 4)
-
 ;; indent in html/xml/templates
 ;;(setq sgml-basic-offset 4)
 ;; might need to add this to a hook
@@ -310,16 +292,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
 
 (add-hook 'python-mode-hook (lambda () (setq tab-width 4)))
-(add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda () (define-key
                                         evil-insert-state-map
                                         (kbd "RET")
                                         'evil-ret)))
 (require 'py-isort)
 
-(setq jedi:complete-on-dot t)
-(setq jedi:get-in-function-call-delay 200)
-(load-file "~/.emacs.d/python-flake8/python-flake8.el")
+;; (setq jedi:complete-on-dot t)
+;; (setq jedi:get-in-function-call-delay 200)
+;; (load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
 ;; c
 (setq c-default-style "linux"
@@ -346,9 +328,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (custom-set-variables
 ;;   '(eclim-eclipse-dirs '("/Applications/Eclipse.app/Contents/Eclipse/"))
 ;;   '(eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"))
-(require 'eclim)
-(setq eclimd-autostart t)
-(global-eclim-mode)
+;; (require 'eclim)
+;; (setq eclimd-autostart t)
+;; (global-eclim-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
 
