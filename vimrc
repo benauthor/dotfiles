@@ -3,41 +3,41 @@ set nocompatible
 
 """Vundle"""
 "load vundle
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#rc()
+" filetype off
+" set rtp+=~/.vim/bundle/Vundle.vim
+" call vundle#rc()
 "let Vundle manage Vundle
-Bundle 'gmarik/Vundle.vim'
+" Bundle 'gmarik/Vundle.vim'
 "My bundles here:
-Bundle 'kien/ctrlp.vim'
-Bundle 'scrooloose/syntastic'
-Bundle 'scrooloose/nerdtree'
-Bundle 'vim-scripts/HJKL'
-Bundle 'Lokaltog/vim-powerline'
-Bundle 'plasticboy/vim-markdown'
+" Bundle 'kien/ctrlp.vim'
+" Bundle 'scrooloose/syntastic'
+" Bundle 'scrooloose/nerdtree'
+" Bundle 'vim-scripts/HJKL'
+" Bundle 'Lokaltog/vim-powerline'
+" Bundle 'plasticboy/vim-markdown'
 "Bundle 'tomtom/quickfixsigns_vim'
-Bundle 'tpope/vim-surround'
-Bundle 'mattn/emmet-vim'
-Bundle 'tomtom/tcomment_vim'
-Bundle 'Townk/vim-autoclose'
+" Bundle 'tpope/vim-surround'
+" Bundle 'mattn/emmet-vim'
+" Bundle 'tomtom/tcomment_vim'
+" Bundle 'Townk/vim-autoclose'
 
 "now we can turn filetype back on
-filetype plugin indent on
+" filetype plugin indent on
 
 """ctlp"""
-let g:ctrlp_map = '<c-0>'
-let g:ctrlp_cmd = 'ctrlp'
+" let g:ctrlp_map = '<c-0>'
+" let g:ctrlp_cmd = 'ctrlp'
 """Copypasta"""
 " toggle annoying clipboard behavior
 set clipboard=unnamed
 set pastetoggle=<F5>
 " correct shift tab behavior
 " this seems a problem on the debian servers via ssh from my osx box.
-exe 'set t_kB=' . nr2char(27) . '[Z'
+" exe 'set t_kB=' . nr2char(27) . '[Z'
 
 """Highlighting
 "we like syntax highlighting
-syntax on
+" syntax on
 
 """File behavior"""
 " Set to auto read when a file is changed from the outside
@@ -45,7 +45,7 @@ set autoread
 
 """Mouse"""
 set term=xterm
-set mouse=i
+" set mouse=i
 
 """Search
 " Ignore case when searching
@@ -60,7 +60,7 @@ set hlsearch
 set incsearch
 
 """Colors"""
-colorscheme desert
+" colorscheme desert
 set background=dark
 
 """Tabs"""
@@ -119,16 +119,16 @@ set list
 set laststatus=2   " Always show the statusline
 set encoding=utf-8 " Necessary to show Unicode glyphs
 set t_Co=256 " Explicitly tell Vim that the terminal supports 256 colors
-let g:Powerline_symbols = 'fancy'
+" let g:Powerline_symbols = 'fancy'
 
 """Line numbers"""
 "set number
 
 "filetype things
-au BufNewFile,BufRead *.pt set filetype=xml
-au BufReadPost *.rkt,*.rktl set filetype=scheme
+" au BufNewFile,BufRead *.pt set filetype=xml
+" au BufReadPost *.rkt,*.rktl set filetype=scheme
 
 " syntastic options
-let g:syntastic_check_on_open=1
-let g:syntastic_error_symbol='✗'
-let g:syntastic_enable_highlighting=0
+" let g:syntastic_check_on_open=1
+" let g:syntastic_error_symbol='✗'
+" let g:syntastic_enable_highlighting=0

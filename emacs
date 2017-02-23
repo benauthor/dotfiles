@@ -26,7 +26,7 @@
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-(smartparens-global-mode 1)
+;(smartparens-global-mode 1)
 
 (require 'ido)
 (require 'flx-ido)
@@ -92,10 +92,6 @@
 (set-cursor-color "#fb0")
 (blink-cursor-mode 0)
 
-;; copy-paste
-(cua-mode t)
-(setq x-select-enable-clipboard t)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 ;; whitespace
 (setq-default show-trailing-whitespace t)
@@ -143,7 +139,7 @@
 (setq tab-stop-list (number-sequence 4 80 4))
 
 ;; indenting
-;; (load-file "~/.emacs.d/dumbdent/dumbdent.el")
+(load-file "~/.emacs.d/dumbdent/dumbdent.el")
 
 ;; turn off autosave
 (setq auto-save-default nil)
@@ -156,6 +152,10 @@
 
 ;;;;;;;;;;;;;;; keybindings
 
+;; copy-paste like a normal person
+(cua-mode t)
+(setq select-enable-clipboard t)
+(setq interprogram-paste-function 'x-selection-value)
 (defun very-evil-map (keys func)
   "define a keybinding for all evil modes"
   (define-key evil-normal-state-map keys func)
@@ -248,6 +248,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; dumbdenting
 (very-evil-map [C-tab] 'dumbdent-line-or-region)
 (very-evil-map [S-tab] 'dumbdedent-line-or-region)
+(very-evil-map [backtab] 'dumbdedent-line-or-region)
 
 ;;;;;;;;;;;;;; languages
 
@@ -301,7 +302,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; (setq jedi:complete-on-dot t)
 ;; (setq jedi:get-in-function-call-delay 200)
-;; (load-file "~/.emacs.d/python-flake8/python-flake8.el")
+(load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
 ;; c
 (setq c-default-style "linux"
@@ -334,7 +335,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
 
-(add-hook 'after-init-hook 'global-company-mode)
+;; (add-hook 'after-init-hook 'global-company-mode)
 (defun indent-or-complete ()
   "Complete if point is at end of a word, otherwise indent line."
   (interactive)
@@ -350,28 +351,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; TODO fuck around with hippie-expand, seems promising
 (global-set-key "\M-/" 'hippie-expand)
-
-
-;;;;;;;;;;;;;;;;;;; ansi-shell stuff
-;; fix unicode in ansi-term
-(defadvice ansi-term (after advise-ansi-term-coding-system)
-  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
-(ad-activate 'ansi-term)
-
-;; kill buffer if you kill the term process
-(defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
-  (if (memq (process-status proc) '(signal exit))
-      (let ((buffer (process-buffer proc)))
-        ad-do-it
-        (kill-buffer buffer))
-    ad-do-it))
-(ad-activate 'term-sentinel)
-
-;; use bash
-(defvar my-term-shell "/bin/bash")
-(defadvice ansi-term (before force-bash)
-  (interactive (list my-term-shell)))
-(ad-activate 'ansi-term)
 
 
 ;;;;;;;;;;;;;; utility
@@ -390,7 +369,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 (global-set-key (kbd "C-c C-c") 'switch-to-previous-buffer) ;; like screen
 ;; (define-key erc-mode-map (kbd "C-c C-c") 'switch-to-previous-buffer)
-
 
 (defun multiline-it ()
   (interactive)
@@ -431,6 +409,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ;; back to normal
   (widen))
 
+(defun increment-number-at-point ()
+  (interactive)
+  (skip-chars-backward "0-9")
+  (or (looking-at "[0-9]+")
+      (error "No number at point"))
+  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
+
 
 ;;;;;;;;;;;;; tidyness
 (defun bury-compile-buffer-if-successful (buffer string)
@@ -447,26 +433,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                         (switch-to-prev-buffer (get-buffer-window buf) 'kill))
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
- '(frame-background-mode nil)
- '(magit-use-overlays nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
-(defun increment-number-at-point ()
-  (interactive)
-  (skip-chars-backward "0-9")
-  (or (looking-at "[0-9]+")
-      (error "No number at point"))
-  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
+;; fun times

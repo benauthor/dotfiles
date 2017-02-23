@@ -112,13 +112,16 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
 export PATH=$PATH:~/work/blackbox/bin
 export PATH=$PATH:$HOME/bin
 export PYTHONPATH=$PYTHONPATH:~/work/scripts
 export PATH=$PATH:~/work/arcanist/bin
 export PATH=$PATH:~/work/arcanist/resources/shell/bash-completion
+export PATH=$PATH:/opt/pycharm-community-2016.3.2/bin
 source ~/work/playbooks/includes/utility_functions.sh
 export EH_DEV_ENVIRONMENT=1
+source ~/.aws/profile
 
 # git
 export GIT_PS1_SHOWDIRTYSTATE=1
