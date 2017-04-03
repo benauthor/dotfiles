@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=5000
+HISTFILESIZE=10000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -115,6 +115,7 @@ fi
 
 export PATH=$PATH:~/work/blackbox/bin
 export PATH=$PATH:$HOME/bin
+export PATH=$PATH:$HOME/local/bin
 export PYTHONPATH=$PYTHONPATH:~/work/scripts
 export PATH=$PATH:~/work/arcanist/bin
 export PATH=$PATH:~/work/arcanist/resources/shell/bash-completion
@@ -147,3 +148,6 @@ __prompt_command() {
     fi
 }
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
+
+export DEVENV_MEMORY=4096
+export DEVENV_CPUS=4

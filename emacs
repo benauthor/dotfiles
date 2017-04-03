@@ -1,6 +1,60 @@
 ;; -*-Emacs-Lisp-*-
 
+(setq packages-i-use `(async
+                       auto-complete
+                       cider
+                       clojure-mode
+                       column-marker
+                       company
+                       concurrent
+                       ctable
+                       dash
+                       deferred
+                       epc
+                       epl
+                       erlang
+                       evil
+                       evil-nerd-commenter
+                       evil-surround
+                       flx
+                       flx-ido
+                       flycheck
+                       flycheck-clojure
+                       git-commit
+                       goto-chg
+                       ido-vertical-mode
+                       jedi
+                       jedi-core
+                       js2-mode
+                       json-mode
+                       json-reformat
+                       json-snatcher
+                       lusty-explorer
+                       macrostep
+                       magit
+                       magit-popup
+                       markdown-mode
+                       markdown-preview-mode
+                       pkg-info
+                       popup
+                       powerline
+                       py-isort
+                       python-environment
+                       queue
+                       rainbow-delimiters
+                       slime
+                       smartparens
+                       smex
+                       solarized-theme
+                       spinner
+                       undo-tree
+                       uuidgen
+                       web-server
+                       websocket
+                       with-editor
+                       yaml-mode))
 
+;; where we get our packages from
 (setq package-archives '(
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
@@ -11,25 +65,28 @@
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
-(load-theme 'solarized-light t)
-;; (load-theme 'solarized-dark t)
+;; (load-theme 'solarized-light t)
+(load-theme 'solarized-dark t)
 
 ;; don't warn when following symbolic link to version controlled file
 (setq vc-follow-symlinks nil)
 
+;; evil
 (require 'evil)
 (evil-mode 1)
-
 (require 'evil-surround)
 (global-evil-surround-mode 1)
 
+;; colooors
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-;(smartparens-global-mode 1)
+;; do we want parens to match? depends on how I feel today
+;; (smartparens-global-mode 1)
 
+;; ido mode
 (require 'ido)
-(require 'flx-ido)
+(require 'flx-ido)  ; better fuzzy matching
 (require 'ido-vertical-mode)
 (ido-mode 1)
 (flx-ido-mode 1)
@@ -45,37 +102,24 @@
 (ido-vertical-mode 1)
 (setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
 
+;; magic meta-x that works with ido
 (require 'smex)
 (global-set-key [(meta x)] 'smex)
 
-(require 'tramp)
-(setq tramp-default-method "ssh")
-
+;; on the fly linting
 (require 'flycheck)
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;;(require 'midnight)
 ;;(setq clean-buffer-list-delay-general 1)
 
+;; visual cue when I go over 80 columns
 (require 'column-marker)
 (add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
+;; sort of mimic vim's powerline
 (require 'powerline)
 (powerline-default-theme)
-
-;; slime
-(require 'slime)
-;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
-(setq inferior-lisp-program "/usr/local/bin/ccl64 -K utf-8")
-(setq slime-net-coding-system 'utf-8-unix)
-(slime-setup '(slime-fancy))
-;; ?
-;; (require 'slime-autoloads)
-
-;; magit
-;; (require 'magit)
-;; (setq magit-auto-revert-mode nil)
-;; (setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; window navigation
 (winner-mode 1)
@@ -92,7 +136,6 @@
 (set-cursor-color "#fb0")
 (blink-cursor-mode 0)
 
-
 ;; whitespace
 (setq-default show-trailing-whitespace t)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -102,7 +145,6 @@
 ;; enable disabled-by-default
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-
 
 ;; default directory
 (setq default-directory (concat (getenv "HOME") "/"))
@@ -146,16 +188,12 @@
 
 ;; start size
 (setq default-frame-alist '(
-                            (width . 140)
-                            (height . 42) ))
+                            (width . 200)
+                            (height . 60) ))
 
 
 ;;;;;;;;;;;;;;; keybindings
 
-;; copy-paste like a normal person
-(cua-mode t)
-(setq select-enable-clipboard t)
-(setq interprogram-paste-function 'x-selection-value)
 (defun very-evil-map (keys func)
   "define a keybinding for all evil modes"
   (define-key evil-normal-state-map keys func)
@@ -250,6 +288,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (very-evil-map [S-tab] 'dumbdedent-line-or-region)
 (very-evil-map [backtab] 'dumbdedent-line-or-region)
 
+
+;; copy-paste like a normal person
+(cua-mode t)
+(setq select-enable-clipboard t)
+(setq interprogram-paste-function 'x-selection-value)
+;; but now my brain hurts because mac/linux
+;; C-x for cut in particular interferes with shit
+;; (define-key evil-insert-state-map (kbd "C-c") 'cua-copy-region)
+;; (define-key evil-insert-state-map (kbd "C-v") 'cua-paste)
+;; (define-key evil-insert-state-map (kbd "C-x") 'cua-cut-region)
+(very-evil-map (kbd "s-c") 'cua-copy-region)
+(very-evil-map (kbd "s-v") 'cua-paste)
+(very-evil-map (kbd "s-x") 'cua-cut-region)
+
+;; other mac idioms I can't remove from my fingers
+(very-evil-map (kbd "s-s") 'save-buffer)
+(very-evil-map (kbd "s-w") 'kill-this-buffer)
+(very-evil-map (kbd "s-a") 'mark-whole-buffer)
+
 ;;;;;;;;;;;;;; languages
 
 ;; Vagrant is ruby
@@ -288,12 +345,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defun insert-pdb-trace ()
   "Why spend your whole life typing?"
   (interactive)
-  ;; (insert "import pdb;pdb.set_trace()"))
   (insert "import ipdb;ipdb.set_trace()"))
 (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
 
 (add-hook 'python-mode-hook (lambda () (setq tab-width 4)))
-;; (add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook (lambda () (define-key
                                         evil-insert-state-map
                                         (kbd "RET")
@@ -310,6 +366,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; json
 (setq json-reformat:pretty-string? t)
+
+;; js
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; go
 (setq gofmt-command "goimports")
@@ -436,3 +495,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 ;; fun times
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (graphviz-dot-mode js2-mode yaml-mode markdown-preview-mode json-mode erlang solarized-theme smex smartparens slime rainbow-delimiters py-isort powerline magit lusty-explorer jedi ido-vertical-mode flycheck-clojure flx-ido evil-surround evil-nerd-commenter company column-marker))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
