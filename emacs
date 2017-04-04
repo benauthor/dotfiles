@@ -1,5 +1,21 @@
 ;; -*-Emacs-Lisp-*-
 
+;;; Commentary:
+
+;;; This is my .emacs file.  There are many like it, but this one is mine.
+
+;;; Code:
+
+(defun ensure-packages-installed (packages)
+  (mapcar
+   (lambda (package)
+     (if (package-installed-p package)
+         nil
+       (if (y-or-n-p (format "Package %s is missing.  Install it? " package))
+           (package-install package)
+         package)))
+   packages))
+
 (setq packages-i-use `(async
                        auto-complete
                        cider
@@ -59,7 +75,13 @@
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
                          ))
+
 (package-initialize)
+
+(or (file-exists-p package-user-dir)
+    (package-refresh-contents))
+
+(ensure-packages-installed packages-i-use)
 
 ;; recompile .emacs.d on open
 ;; sometimes this is useful. it just takes a while -- usually keep it commented

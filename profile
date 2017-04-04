@@ -16,6 +16,15 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-# OSX Python installer loves to edit the path here:
+# Mac Python installer loves to edit the path here:
 
-# If it does, nuke it.
+
+# Setting PATH for Python 2.7
+# The original version is saved in .profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
+export PATH
+
+# Setting PATH for Python 3.6
+# The original version is saved in .profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
+export PATH
