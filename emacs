@@ -210,7 +210,7 @@
 
 ;; start size
 (setq default-frame-alist '(
-                            (width . 200)
+                            (width . 100)
                             (height . 60) ))
 
 
@@ -359,9 +359,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
 ;; indent in html/xml/templates
-;;(setq sgml-basic-offset 4)
+(setq sgml-basic-offset 4)
 ;; might need to add this to a hook
-;; (setq nxml-child-indent 4)
+(setq nxml-child-indent 4)
 
 ;; python
 (defun insert-pdb-trace ()

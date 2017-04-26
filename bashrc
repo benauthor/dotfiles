@@ -95,9 +95,18 @@ __prompt_command() {
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
 # eh junk
-export PATH=$PATH:~/work/blackbox/bin
 source ~/.aws/profile
-export DEVENV_MEMORY=4096
-export DEVENV_CPUS=4
+export DEVENV_MEMORY=8000
+export DEVENV_CPUS=3
 export EH_PLAYBOOKS_ROOT=~/work/playbooks
 source ~/work/playbooks/includes/utility_functions.sh
+
+
+export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
+export JAVA_9_HOME=$(/usr/libexec/java_home -v1.9 2> /dev/null)
+
+alias java8='export JAVA_HOME=$JAVA_8_HOME'
+alias java9='export JAVA_HOME=$JAVA_9_HOME'
+
+#default java8
+export JAVA_HOME=$JAVA_8_HOME
