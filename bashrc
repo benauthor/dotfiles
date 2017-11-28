@@ -13,6 +13,9 @@ HISTCONTROL=ignoreboth
 # append to the history file, don't overwrite it
 shopt -s histappend
 
+# globstar, requires bash 4
+shopt -s globstar
+
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=5000
 HISTFILESIZE=10000
@@ -110,3 +113,30 @@ alias java9='export JAVA_HOME=$JAVA_9_HOME'
 
 #default java8
 export JAVA_HOME=$JAVA_8_HOME
+
+export ANDROID_HOME=/usr/local/share/android-sdk
+
+# our version of gpg doesn't start a new agent every
+# time, so this easy way is safe
+eval $( gpg-agent --daemon 2>/dev/null )
+
+# added by travis gem
+[ -f /Users/bender/.travis/travis.sh ] && source /Users/bender/.travis/travis.sh
+
+# tex
+# export PATH=$PATH:/Library/TeX/texbin
+export PATH=$PATH:~/local/bin
+
+# rbenv
+export PATH=~/.rbenv/shims:$PATH
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+# shellcheck disable=SC1091
+. "/usr/local/opt/nvm/nvm.sh"
+
+# go
+export GOPATH=~/go
+
+# local tomcat
+export PATH=/usr/local/opt/tomcat@7/bin:$PATH

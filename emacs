@@ -51,6 +51,7 @@
                        magit-popup
                        markdown-mode
                        markdown-preview-mode
+                       meghanada
                        pkg-info
                        popup
                        powerline
@@ -92,6 +93,10 @@
 
 ;; don't warn when following symbolic link to version controlled file
 (setq vc-follow-symlinks nil)
+
+;; turn off goddam bell!
+;; (setq visible-bell 1)
+(setq ring-bell-function 'ignore)
 
 ;; evil
 (require 'evil)
@@ -258,7 +263,7 @@
 
 ;; when typing, return does nice indenting too
 ;; note to self: C-m == RET
-(define-key evil-insert-state-map (kbd "RET") 'reindent-then-newline-and-indent)
+;; (define-key evil-insert-state-map (kbd "RET") 'reindent-then-newline-and-indent)
 
 ;; evil-nerd-comment
 (define-key evil-normal-state-map "\M-;" 'evilnc-comment-or-uncomment-lines)
@@ -331,6 +336,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;;;;;;;;;;;;;; languages
 
+;; common lisp
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
+(setq slime-contribs '(slime-fancy))
+
 ;; Vagrant is ruby
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
 
@@ -350,6 +360,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.jsp$" . nxml-mode))
 
 ;; clojure
+
+;; cider doesn't work with java 9 https://github.com/technomancy/leiningen/issues/2149
+(setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home")
 (add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
 (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 (add-hook 'cider-mode-hook #'eldoc-mode)
@@ -394,11 +407,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; go
 (setq gofmt-command "goimports")
-(setenv "GOPATH" "/Users/evanbender/go")
+;;(setenv "GOPATH" "/Users/bender/go")
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
 ;; java
+;; (require 'meghanada)
+(load-file "~/.emacs.d/flycheck-infer/flycheck-infer.el")
+
+;; (add-hook 'java-mode-hook
+;;           (lambda ()
+;;             ;; meghanada-mode on
+;;             (meghanada-mode t)
+;;             (add-hook 'before-save-hook 'meghanada-code-beautify-before-save)))
 ;; eclim
 ;; (require 'eclim)
 ;; (require 'eclimd)
@@ -515,7 +536,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
 
-
 ;; fun times
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -524,7 +544,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (graphviz-dot-mode js2-mode yaml-mode markdown-preview-mode json-mode erlang solarized-theme smex smartparens slime rainbow-delimiters py-isort powerline magit lusty-explorer jedi ido-vertical-mode flycheck-clojure flx-ido evil-surround evil-nerd-commenter company column-marker))))
+    (hy-mode jinja2-mode protobuf-mode go-mode meghanada graphviz-dot-mode js2-mode yaml-mode markdown-preview-mode json-mode erlang solarized-theme smex smartparens slime rainbow-delimiters py-isort powerline magit lusty-explorer jedi ido-vertical-mode flycheck-clojure flx-ido evil-surround evil-nerd-commenter company column-marker))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
