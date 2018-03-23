@@ -218,6 +218,8 @@
                             (width . 100)
                             (height . 60) ))
 
+;; (electric-pair-mode 0)
+
 
 ;;;;;;;;;;;;;;; keybindings
 
@@ -403,7 +405,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq json-reformat:pretty-string? t)
 
 ;; js
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
 ;; go
 (setq gofmt-command "goimports")
@@ -434,6 +436,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (require 'eclim)
 ;; (setq eclimd-autostart t)
 ;; (global-eclim-mode)
+
+(add-to-list 'auto-mode-alist '("\\.md$" . jekyll-markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.html" . jekyll-html-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
 
@@ -544,7 +549,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (hy-mode jinja2-mode protobuf-mode go-mode meghanada graphviz-dot-mode js2-mode yaml-mode markdown-preview-mode json-mode erlang solarized-theme smex smartparens slime rainbow-delimiters py-isort powerline magit lusty-explorer jedi ido-vertical-mode flycheck-clojure flx-ido evil-surround evil-nerd-commenter company column-marker))))
+    (jekyll-modes thrift rjsx-mode hy-mode jinja2-mode protobuf-mode go-mode meghanada graphviz-dot-mode js2-mode yaml-mode markdown-preview-mode json-mode erlang solarized-theme smex smartparens slime rainbow-delimiters py-isort powerline magit lusty-explorer jedi ido-vertical-mode flycheck-clojure flx-ido evil-surround evil-nerd-commenter company column-marker))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

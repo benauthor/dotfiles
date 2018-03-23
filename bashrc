@@ -9,24 +9,20 @@ esac
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
-
 # append to the history file, don't overwrite it
 shopt -s histappend
-
-# globstar, requires bash 4
-shopt -s globstar
-
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=5000
 HISTFILESIZE=10000
 
+# globstar, requires bash 4
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
-
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -100,7 +96,7 @@ PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 # eh junk
 source ~/.aws/profile
 export DEVENV_MEMORY=8000
-export DEVENV_CPUS=3
+export DEVENV_CPUS=4
 export EH_PLAYBOOKS_ROOT=~/work/playbooks
 source ~/work/playbooks/includes/utility_functions.sh
 
@@ -128,7 +124,7 @@ eval $( gpg-agent --daemon 2>/dev/null )
 export PATH=$PATH:~/local/bin
 
 # rbenv
-export PATH=~/.rbenv/shims:$PATH
+# export PATH=~/.rbenv/shims:$PATH
 
 # nvm
 export NVM_DIR="$HOME/.nvm"
@@ -140,3 +136,10 @@ export GOPATH=~/go
 
 # local tomcat
 export PATH=/usr/local/opt/tomcat@7/bin:$PATH
+
+# sweet inline plotting
+export ITERMPLOT=rv
+export MPLBACKEND="module://itermplot"
+#export MPLBACKEND="TkAgg"
+
+export EHUBRC_LOCATION=~/work/ehubrc
