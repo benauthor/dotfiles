@@ -29,6 +29,7 @@
                        epc
                        epl
                        erlang
+                       exec-path-from-shell
                        evil
                        evil-nerd-commenter
                        evil-surround
@@ -83,6 +84,9 @@
     (package-refresh-contents))
 
 (ensure-packages-installed packages-i-use)
+
+;; make path sane
+(exec-path-from-shell-initialize)
 
 ;; recompile .emacs.d on open
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
@@ -189,15 +193,15 @@
 (setq create-lockfiles nil)
 
 ;; put stuff on path so we can use it
-(defun set-exec-path-from-shell-PATH ()
-  "Sets the exec-path to the same value used by the user shell"
-  (let ((path-from-shell
-         (replace-regexp-in-string
-          "[[:space:]\n]*$" ""
-          (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
-(set-exec-path-from-shell-PATH)
+;; (defun set-exec-path-from-shell-PATH ()
+;;   "Sets the exec-path to the same value used by the user shell"
+;;   (let ((path-from-shell
+;;          (replace-regexp-in-string
+;;           "[[:space:]\n]*$" ""
+;;           (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
+;;     (setenv "PATH" path-from-shell)
+;;     (setq exec-path (split-string path-from-shell path-separator))))
+;; (set-exec-path-from-shell-PATH)
 
 ;; turn off the welcome screen
 (setq inhibit-startup-message t)
@@ -317,7 +321,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (very-evil-map [S-tab] 'dumbdedent-line-or-region)
 (very-evil-map [backtab] 'dumbdedent-line-or-region)
 
-
 ;; copy-paste like a normal person
 (cua-mode t)
 (setq select-enable-clipboard t)
@@ -340,8 +343,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; common lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
+(add-to-list 'auto-mode-alist '("\\.ros\\'" . slime-mode))
 (setq inferior-lisp-program "sbcl")
 (setq slime-contribs '(slime-fancy))
+
+;; racket scheme
+(setq racket-program "/Applications/Racket v6.12/bin/racket")
 
 ;; Vagrant is ruby
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
@@ -379,23 +386,35 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq nxml-child-indent 4)
 
 ;; python
+(require 'py-isort)
+(load-file "~/.emacs.d/python-flake8/python-flake8.el")
+
+;; (setq jedi:complete-on-dot t)
+;; (setq jedi:get-in-function-call-delay 200)
+
 (defun insert-pdb-trace ()
   "Why spend your whole life typing?"
   (interactive)
   (insert "import ipdb;ipdb.set_trace()"))
-(very-evil-map (kbd "C-x p") 'insert-pdb-trace)
 
-(add-hook 'python-mode-hook (lambda () (setq tab-width 4)))
-(add-hook 'python-mode-hook 'jedi:setup)
-(add-hook 'python-mode-hook (lambda () (define-key
-                                        evil-insert-state-map
-                                        (kbd "RET")
-                                        'evil-ret)))
-(require 'py-isort)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (progn
+              (setq tab-width 4)
+              (jedi:setup)
+              (define-key evil-insert-state-map (kbd "RET") 'evil-ret)
+              (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
+              (very-evil-map (kbd "s-b") 'jedi:goto-definition))))
 
-;; (setq jedi:complete-on-dot t)
-;; (setq jedi:get-in-function-call-delay 200)
-(load-file "~/.emacs.d/python-flake8/python-flake8.el")
+;; (add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook
+;;           (lambda () (define-key evil-insert-state-map (kbd "RET") 'evil-ret)))
+;; (add-hook 'python-mode-hook
+;;           (lambda () (very-evil-map (kbd "C-x p") 'insert-pdb-trace)))
+;; (add-hook 'python-mode-hook
+;;           (lambda () (very-evil-map (kbd "s-b") 'jedi:goto-definition)))
+
+
 
 ;; c
 (setq c-default-style "linux"
@@ -407,8 +426,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; js
 (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
-;; go
+;; golang
 (setq gofmt-command "goimports")
+(add-hook 'go-mode-hook
+      (lambda ()
+        (set (make-local-variable 'company-backends) '(company-go))
+        (company-mode)))
 ;;(setenv "GOPATH" "/Users/bender/go")
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
@@ -426,8 +449,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (require 'eclim)
 ;; (require 'eclimd)
 ;; (global-eclim-mode)
-;; (require 'auto-complete-config)
-;; (ac-config-default)
+(require 'auto-complete-config)
+(ac-config-default)
 ;; (require 'ac-emacs-eclim-source)
 ;; (ac-emacs-eclim-config)
 ;; (custom-set-variables
@@ -437,19 +460,28 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (setq eclimd-autostart t)
 ;; (global-eclim-mode)
 
+;; rust
+(with-eval-after-load 'rust-mode
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
 (add-to-list 'auto-mode-alist '("\\.md$" . jekyll-markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.html" . jekyll-html-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
+(require 'company)
+(require 'company-go)
 
 ;; (add-hook 'after-init-hook 'global-company-mode)
 (defun indent-or-complete ()
   "Complete if point is at end of a word, otherwise indent line."
   (interactive)
   (if (looking-at "\\>")
-      (dabbrev-expand nil)
+      ;;(dabbrev-expand nil)
+      (hippie-expand nil)
       ;;(completion-at-point)
-      ;; (company-complete)
+      ;;(company-complete)
+      ;;(ac-complete nil)
+
     (indent-for-tab-command)
     ))
 (define-key evil-insert-state-map [tab] 'indent-or-complete)
@@ -549,7 +581,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (jekyll-modes thrift rjsx-mode hy-mode jinja2-mode protobuf-mode go-mode meghanada graphviz-dot-mode js2-mode yaml-mode markdown-preview-mode json-mode erlang solarized-theme smex smartparens slime rainbow-delimiters py-isort powerline magit lusty-explorer jedi ido-vertical-mode flycheck-clojure flx-ido evil-surround evil-nerd-commenter company column-marker))))
+    (## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
