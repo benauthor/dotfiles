@@ -92,8 +92,8 @@
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
-;; (load-theme 'solarized-light t)
-(load-theme 'solarized-dark t)
+(load-theme 'solarized-light t)
+;; (load-theme 'solarized-dark t)
 
 ;; don't warn when following symbolic link to version controlled file
 (setq vc-follow-symlinks nil)

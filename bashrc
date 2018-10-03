@@ -93,14 +93,6 @@ __prompt_command() {
 }
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
-# eh junk
-source ~/.aws/profile
-export DEVENV_MEMORY=8000
-export DEVENV_CPUS=4
-export EH_PLAYBOOKS_ROOT=~/work/playbooks
-source ~/work/playbooks/includes/utility_functions.sh
-
-
 export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
 export JAVA_9_HOME=$(/usr/libexec/java_home -v1.9 2> /dev/null)
 
@@ -108,9 +100,7 @@ alias java8='export JAVA_HOME=$JAVA_8_HOME'
 alias java9='export JAVA_HOME=$JAVA_9_HOME'
 
 #default java8
-export JAVA_HOME=$JAVA_8_HOME
-
-export ANDROID_HOME=/usr/local/share/android-sdk
+export JAVA_HOME=$JAVA_9_HOME
 
 # our version of gpg doesn't start a new agent every
 # time, so this easy way is safe
@@ -119,27 +109,12 @@ eval $( gpg-agent --daemon 2>/dev/null )
 # added by travis gem
 [ -f /Users/bender/.travis/travis.sh ] && source /Users/bender/.travis/travis.sh
 
-# tex
-# export PATH=$PATH:/Library/TeX/texbin
+# misc local utils
 export PATH=$PATH:~/local/bin
-
-# rbenv
-# export PATH=~/.rbenv/shims:$PATH
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-# shellcheck disable=SC1091
-. "/usr/local/opt/nvm/nvm.sh"
 
 # go
 export GOPATH=~/go
 
-# local tomcat
-export PATH=/usr/local/opt/tomcat@7/bin:$PATH
-
 # sweet inline plotting
 export ITERMPLOT=rv
 export MPLBACKEND="module://itermplot"
-#export MPLBACKEND="TkAgg"
-
-export EHUBRC_LOCATION=~/work/ehubrc
