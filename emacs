@@ -20,8 +20,9 @@
                        auto-complete
                        cider
                        clojure-mode
-                       column-marker
+;;                       column-marker
                        company
+                       company-go
                        concurrent
                        ctable
                        dash
@@ -145,8 +146,8 @@
 ;;(setq clean-buffer-list-delay-general 1)
 
 ;; visual cue when I go over 80 columns
-(require 'column-marker)
-(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
+;;(require 'column-marker)
+;;(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
 ;; sort of mimic vim's powerline
 (require 'powerline)
@@ -342,8 +343,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;;;;;;;;;;;;; languages
 
 ;; common lisp
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-(add-to-list 'auto-mode-alist '("\\.ros\\'" . slime-mode))
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; (add-to-list 'auto-mode-alist '("\\.ros\\'" . slime-mode))
 (setq inferior-lisp-program "sbcl")
 (setq slime-contribs '(slime-fancy))
 
@@ -387,7 +388,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; python
 (require 'py-isort)
-(load-file "~/.emacs.d/python-flake8/python-flake8.el")
+;; (load-file "~/.emacs.d/python-flake8/python-flake8.el")
 
 ;; (setq jedi:complete-on-dot t)
 ;; (setq jedi:get-in-function-call-delay 200)
@@ -438,7 +439,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; java
 ;; (require 'meghanada)
-(load-file "~/.emacs.d/flycheck-infer/flycheck-infer.el")
+;; (load-file "~/.emacs.d/flycheck-infer/flycheck-infer.el")
 
 ;; (add-hook 'java-mode-hook
 ;;           (lambda ()

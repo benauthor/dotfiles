@@ -18,7 +18,7 @@ HISTFILESIZE=10000
 # globstar, requires bash 4
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-shopt -s globstar
+# shopt -s globstar
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -110,7 +110,7 @@ eval $( gpg-agent --daemon 2>/dev/null )
 [ -f /Users/bender/.travis/travis.sh ] && source /Users/bender/.travis/travis.sh
 
 # misc local utils
-export PATH=$PATH:~/local/bin
+export PATH=~/local/bin:$PATH
 
 # go
 export GOPATH=~/go
