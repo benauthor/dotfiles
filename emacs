@@ -113,7 +113,7 @@
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;; do we want parens to match? depends on how I feel today
-;; (smartparens-global-mode 1)
+(smartparens-global-mode 1)
 
 ;; ido mode
 (require 'ido)
@@ -427,14 +427,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
 ;; golang
+;; this is useful: http://tleyden.github.io/blog/2014/05/22/configure-emacs-as-a-go-editor-from-scratch/
 (setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
         (set (make-local-variable 'company-backends) '(company-go))
-        (company-mode)))
-;;(setenv "GOPATH" "/Users/bender/go")
-;; (add-hook 'before-save-hook 'gofmt-before-save)
-;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
+        (company-mode)
+        (very-evil-map (kbd "s-.") 'godef-jump)
+        (very-evil-map (kbd "s-,") 'pop-tag-mark)
+        (if (not (string-match "go" compile-command))
+            (set (make-local-variable 'compile-command)
+                 "go build -v && go test -v && go vet"))
+        (add-hook 'before-save-hook 'gofmt-before-save)))
+(setenv "GOPATH" "/Users/bender/go")
+(add-to-list 'exec-path "/Users/bender/go/bin")
+
+(add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
 ;; java
 ;; (require 'meghanada)
