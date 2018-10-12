@@ -113,6 +113,9 @@
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+;; typeface
+(set-frame-font "Menlo 13" nil t)
+
 ;; do we want parens to match? depends on how I feel today
 ;; (smartparens-global-mode 1)
 
@@ -428,12 +431,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
 ;; golang
-(setq gofmt-command "goimports")
+;; (setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
         (set (make-local-variable 'company-backends) '(company-go))
-        (company-mode)))
-;;(setenv "GOPATH" "/Users/bender/go")
+        (company-mode)
+        ;; wide tab
+        (setq tab-width 4 indent-tabs-mode 1)
+        ;; always gofmt
+        (add-hook 'before-save-hook 'gofmt-before-save)
+        ;; godef shortcuts
+        (very-evil-map (kbd "s-.") 'godef-jump)
+        (very-evil-map (kbd "s-,") 'pop-tag-mark)))
+(setenv "GOPATH" "/Users/evan.bender/go")
+(add-to-list 'exec-path "/Users/evan.bender/go/bin")
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
@@ -583,9 +594,3 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  '(package-selected-packages
    (quote
     (## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

@@ -93,14 +93,14 @@ __prompt_command() {
 }
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
-export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
-export JAVA_9_HOME=$(/usr/libexec/java_home -v1.9 2> /dev/null)
+#export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
+#export JAVA_9_HOME=$(/usr/libexec/java_home -v1.9 2> /dev/null)
 
-alias java8='export JAVA_HOME=$JAVA_8_HOME'
-alias java9='export JAVA_HOME=$JAVA_9_HOME'
+#alias java8='export JAVA_HOME=$JAVA_8_HOME'
+#alias java9='export JAVA_HOME=$JAVA_9_HOME'
 
 #default java8
-export JAVA_HOME=$JAVA_9_HOME
+#export JAVA_HOME=$JAVA_9_HOME
 
 # our version of gpg doesn't start a new agent every
 # time, so this easy way is safe
@@ -114,7 +114,14 @@ export PATH=~/local/bin:$PATH
 
 # go
 export GOPATH=~/go
+export PATH=~/go/bin:$PATH
 
 # sweet inline plotting
 export ITERMPLOT=rv
 export MPLBACKEND="module://itermplot"
+
+# include .bashrc_hidden if it exists
+# if i.e. I don't want to version control some secrets
+if [ -f ~/.bashrc_hidden ]; then
+    . .bashrc_hidden
+fi
