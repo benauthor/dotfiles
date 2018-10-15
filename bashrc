@@ -115,6 +115,7 @@ export PATH=~/local/bin:$PATH
 # go
 export GOPATH=~/go
 export PATH=~/go/bin:$PATH
+export CGO_CXXFLAGS_ALLOW='-lpthread'
 
 # sweet inline plotting
 export ITERMPLOT=rv
@@ -123,5 +124,5 @@ export MPLBACKEND="module://itermplot"
 # include .bashrc_hidden if it exists
 # if i.e. I don't want to version control some secrets
 if [ -f ~/.bashrc_hidden ]; then
-    . .bashrc_hidden
+    . ~/.bashrc_hidden
 fi

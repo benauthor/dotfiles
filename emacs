@@ -20,7 +20,6 @@
                        auto-complete
                        cider
                        clojure-mode
-;;                       column-marker
                        company
                        company-go
                        concurrent
@@ -43,7 +42,6 @@
                        ido-vertical-mode
                        jedi
                        jedi-core
-                       js2-mode
                        json-mode
                        json-reformat
                        json-snatcher
@@ -93,8 +91,8 @@
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
-(load-theme 'solarized-light t)
-;; (load-theme 'solarized-dark t)
+;; (load-theme 'solarized-light t)
+(load-theme 'solarized-dark t)
 
 ;; don't warn when following symbolic link to version controlled file
 (setq vc-follow-symlinks nil)
@@ -238,8 +236,9 @@
   (define-key evil-visual-state-map keys func))
 
 (defun way-down () (interactive) (evil-next-line 15))
-
 (defun way-up () (interactive) (evil-previous-line 15))
+(very-evil-map [next] 'way-down)
+(very-evil-map [prior] 'way-up)
 
 (defun iwb ()
   "indent whole buffer"
@@ -247,15 +246,13 @@
   (delete-trailing-whitespace)
   (indent-region (point-min) (point-max) nil)
   (untabify (point-min) (point-max)))
-
 (global-set-key (kbd "C-=") 'iwb)
+
 (very-evil-map "\C-y" 'yank)
 (very-evil-map "\C-a" 'move-beginning-of-line)
 (very-evil-map [home] 'move-beginning-of-line)
 (very-evil-map "\C-e" 'move-end-of-line)
 (very-evil-map [end] 'move-end-of-line)
-(very-evil-map [next] 'way-down)
-(very-evil-map [prior] 'way-up)
 
 ;; stop foot-shooting with evil-downcase
 (define-key evil-normal-state-map "gu" nil)
@@ -440,10 +437,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (setq tab-width 4 indent-tabs-mode 1)
         ;; always gofmt
         (add-hook 'before-save-hook 'gofmt-before-save)
+        ;; disable go-build in flycheck because code doesn't actually
+        ;; compile on my host... womp womp
+        ;;(add-to-list 'flycheck-disabled-checkers 'go-build)
         ;; godef shortcuts
+        (very-evil-map (kbd "s-b") 'godef-jump) ;; intellij muscle memory crutch
         (very-evil-map (kbd "s-.") 'godef-jump)
         (very-evil-map (kbd "s-,") 'pop-tag-mark)))
+
 (setenv "GOPATH" "/Users/evan.bender/go")
+(setenv "CGO_CXXFLAGS_ALLOW" "-lpthread")
 (add-to-list 'exec-path "/Users/evan.bender/go/bin")
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
@@ -594,3 +597,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  '(package-selected-packages
    (quote
     (## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
