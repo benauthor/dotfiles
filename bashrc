@@ -126,3 +126,7 @@ export MPLBACKEND="module://itermplot"
 if [ -f ~/.bashrc_hidden ]; then
     . ~/.bashrc_hidden
 fi
+
+# allow ctl-s for forward history
+# because I don't use flow control
+stty -ixon

@@ -20,6 +20,7 @@
                        auto-complete
                        cider
                        clojure-mode
+                       column-enforce-mode
                        company
                        company-go
                        concurrent
@@ -52,9 +53,11 @@
                        markdown-mode
                        markdown-preview-mode
                        meghanada
+                       neotree
                        pkg-info
                        popup
                        powerline
+                       protobuf-mode
                        py-isort
                        python-environment
                        queue
@@ -91,8 +94,8 @@
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
 ;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
-;; (load-theme 'solarized-light t)
-(load-theme 'solarized-dark t)
+(load-theme 'solarized-light t)
+;; (load-theme 'solarized-dark t)
 
 ;; don't warn when following symbolic link to version controlled file
 (setq vc-follow-symlinks nil)
@@ -115,7 +118,7 @@
 (set-frame-font "Menlo 13" nil t)
 
 ;; do we want parens to match? depends on how I feel today
-;; (smartparens-global-mode 1)
+(smartparens-global-mode 1)
 
 ;; ido mode
 (require 'ido)
@@ -147,7 +150,7 @@
 ;;(setq clean-buffer-list-delay-general 1)
 
 ;; visual cue when I go over 80 columns
-;;(require 'column-marker)
+(global-column-enforce-mode t)
 ;;(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
 ;; sort of mimic vim's powerline
@@ -159,6 +162,41 @@
 
 ;; where am I?
 (which-function-mode)
+
+;; file tree navigation
+(require 'neotree)
+(setq neo-smart-open t)
+;(global-set-key [f8] 'neotree-toggle)
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
+(evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
+(evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
+(evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+(evil-define-key 'normal neotree-mode-map (kbd "g") 'neotree-refresh)
+(evil-define-key 'normal neotree-mode-map (kbd "n") 'neotree-next-line)
+(evil-define-key 'normal neotree-mode-map (kbd "p") 'neotree-previous-line)
+(evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
+(evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
+
+;; project navigation
+(projectile-mode +1)
+(setq projectile-switch-project-action 'neotree-projectile-action)
+
+
+(defun neotree-project-dir ()
+  "Open NeoTree using the git root."
+  (interactive)
+  (let ((project-dir (projectile-project-root))
+        (file-name (buffer-file-name)))
+    (neotree-toggle)
+    (if project-dir
+        (if (neo-global--window-exists-p)
+            (progn
+              (neotree-dir project-dir)
+              (neotree-find file-name)))
+      (message "Could not find git project root."))))
+(global-set-key [f8] 'neotree-project-dir)
+
 
 ;; toolbars
 (tool-bar-mode -1)
@@ -340,6 +378,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (very-evil-map (kbd "s-w") 'kill-this-buffer)
 (very-evil-map (kbd "s-a") 'mark-whole-buffer)
 
+;; muscle memory from intellij
+(very-evil-map (kbd "s-O")'projectile-find-file)
+
+
 ;;;;;;;;;;;;;; languages
 
 ;; common lisp
@@ -388,7 +430,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; python
 (require 'py-isort)
+;; https://gist.github.com/andialbrecht/1241830
 ;; (load-file "~/.emacs.d/python-flake8/python-flake8.el")
+
 
 ;; (setq jedi:complete-on-dot t)
 ;; (setq jedi:get-in-function-call-delay 200)
@@ -397,12 +441,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   "Why spend your whole life typing?"
   (interactive)
   (insert "import ipdb;ipdb.set_trace()"))
+  ;; (insert "import pudb;pudb.set_trace()"))
 
 (add-hook 'python-mode-hook
           (lambda ()
             (progn
               (setq tab-width 4)
               (jedi:setup)
+              (setq flycheck-python-pylint-executable "/Library/Frameworks/Python.framework/Versions/3.7/bin/pylint")
+              (setq flycheck-pylintrc "/Users/evan.bender/.pylintrc")
               (define-key evil-insert-state-map (kbd "RET") 'evil-ret)
               (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
               (very-evil-map (kbd "s-b") 'jedi:goto-definition))))
@@ -428,15 +475,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
 ;; golang
-;; (setq gofmt-command "goimports")
+(require 'go-guru)
+(setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
         (set (make-local-variable 'company-backends) '(company-go))
         (company-mode)
         ;; wide tab
-        (setq tab-width 4 indent-tabs-mode 1)
+        (setq tab-width 8 indent-tabs-mode 1)
         ;; always gofmt
         (add-hook 'before-save-hook 'gofmt-before-save)
+        ;; go-guru highlight
+        (go-guru-hl-identifier-mode)
         ;; disable go-build in flycheck because code doesn't actually
         ;; compile on my host... womp womp
         ;;(add-to-list 'flycheck-disabled-checkers 'go-build)
@@ -594,9 +644,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(neo-window-fixed-size nil)
+ '(neo-window-width 30)
  '(package-selected-packages
    (quote
-    (## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
+    (column-enforce-mode projectile all-the-icons neotree go-rename go-guru ## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
