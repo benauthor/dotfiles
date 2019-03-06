@@ -130,3 +130,30 @@ fi
 # allow ctl-s for forward history
 # because I don't use flow control
 stty -ixon
+
+
+
+export SSH_ENV="${HOME}/.ssh/environment"
+
+start_ssh_agent() {
+    echo "Initialising new SSH agent..."
+    ssh-agent -s | sed 's/^echo/#echo/' > "${SSH_ENV}"
+    echo succeeded
+    chmod 600 "${SSH_ENV}"
+    . "${SSH_ENV}" > /dev/null
+    ssh-add -k;
+}
+
+# Source SSH settings, if applicable
+load_ssh_session() {
+    if [ -f "${SSH_ENV}" ]; then
+        . "${SSH_ENV}" > /dev/null
+        ps aux ${SSH_AGENT_PID} | grep 'ssh-agent -s$' > /dev/null || {
+            start_ssh_agent;
+        }
+    else
+        start_ssh_agent;
+    fi
+}
+
+load_ssh_session

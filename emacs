@@ -32,6 +32,7 @@
                        erlang
                        exec-path-from-shell
                        evil
+                       evil-magit
                        evil-nerd-commenter
                        evil-surround
                        flx
@@ -40,6 +41,8 @@
                        flycheck-clojure
                        git-commit
                        goto-chg
+                       godoctor
+                       graphviz-dot-mode
                        ido-vertical-mode
                        jedi
                        jedi-core
@@ -109,6 +112,8 @@
 (evil-mode 1)
 (require 'evil-surround)
 (global-evil-surround-mode 1)
+;; play well with magit
+(require 'evil-magit)
 
 ;; colooors
 (require 'rainbow-delimiters)
@@ -118,7 +123,7 @@
 (set-frame-font "Menlo 13" nil t)
 
 ;; do we want parens to match? depends on how I feel today
-(smartparens-global-mode 1)
+;;(smartparens-global-mode 1)
 
 ;; ido mode
 (require 'ido)
@@ -162,6 +167,9 @@
 
 ;; where am I?
 (which-function-mode)
+
+;; shush warning when working within file tree symlinked into gopath
+(setq find-file-suppress-same-file-warnings 1)
 
 ;; file tree navigation
 (require 'neotree)
@@ -385,7 +393,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;;;;;;;;;;;;; languages
 
 ;; common lisp
-;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (add-to-list 'auto-mode-alist '("\\.ros\\'" . slime-mode))
 (setq inferior-lisp-program "sbcl")
 (setq slime-contribs '(slime-fancy))
@@ -487,11 +495,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (add-hook 'before-save-hook 'gofmt-before-save)
         ;; go-guru highlight
         (go-guru-hl-identifier-mode)
-        ;; disable go-build in flycheck because code doesn't actually
-        ;; compile on my host... womp womp
-        ;;(add-to-list 'flycheck-disabled-checkers 'go-build)
+        ;; megacheck makes my laptop start to melt
+        (add-to-list 'flycheck-disabled-checkers 'go-megacheck)
         ;; godef shortcuts
-        (very-evil-map (kbd "s-b") 'godef-jump) ;; intellij muscle memory crutch
+        ;;(very-evil-map (kbd "s-b") 'godef-jump) ;; intellij muscle memory crutch
+
         (very-evil-map (kbd "s-.") 'godef-jump)
         (very-evil-map (kbd "s-,") 'pop-tag-mark)))
 
@@ -648,7 +656,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  '(neo-window-width 30)
  '(package-selected-packages
    (quote
-    (column-enforce-mode projectile all-the-icons neotree go-rename go-guru ## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
+    (evil-magit godoctor column-enforce-mode projectile all-the-icons neotree go-rename go-guru ## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

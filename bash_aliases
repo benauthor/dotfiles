@@ -7,6 +7,11 @@ alias top='htop'
 # ls in color
 alias ls='ls -G'
 
-# dmc for kubernetes
-# alias kdmc='dmc -ssh="kubectl exec -c toolbox"'
-alias kdmc='dmc -ssh=kdmcshell'
+# git diff ftw
+# alias diff='diff -u'
+alias diff='git diff --no-index'
+
+# go
+alias gco='go test -coverprofile=coverage.out && go tool cover -html=coverage.out'
+
+alias cl='rlwrap sbcl'
