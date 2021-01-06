@@ -6,6 +6,9 @@ case $- in
       *) return;;
 esac
 
+# shush mac zsh warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -116,6 +119,7 @@ export PATH=~/local/bin:$PATH
 export GOPATH=~/go
 export PATH=~/go/bin:$PATH
 export CGO_CXXFLAGS_ALLOW='-lpthread'
+source ~/.gimme/envs/go1.15.2.env
 
 # sweet inline plotting
 export ITERMPLOT=rv
@@ -131,6 +135,8 @@ fi
 # because I don't use flow control
 stty -ixon
 
+# running out of file handles???
+ulimit -S -n $((10240 * 2))
 
 
 export SSH_ENV="${HOME}/.ssh/environment"
@@ -157,3 +163,6 @@ load_ssh_session() {
 }
 
 load_ssh_session
+
+# added by ghcup
+source /Users/evan.bender/.ghcup/env

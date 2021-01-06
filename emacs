@@ -18,8 +18,6 @@
 
 (setq packages-i-use `(async
                        auto-complete
-                       cider
-                       clojure-mode
                        column-enforce-mode
                        company
                        company-go
@@ -29,7 +27,6 @@
                        deferred
                        epc
                        epl
-                       erlang
                        exec-path-from-shell
                        evil
                        evil-magit
@@ -38,24 +35,24 @@
                        flx
                        flx-ido
                        flycheck
-                       flycheck-clojure
                        git-commit
                        goto-chg
                        godoctor
                        graphviz-dot-mode
                        ido-vertical-mode
+                       impatient-mode
                        jedi
-                       jedi-core
                        json-mode
                        json-reformat
                        json-snatcher
+                       lsp-mode
+                       lsp-ui
                        lusty-explorer
                        macrostep
                        magit
                        magit-popup
                        markdown-mode
                        markdown-preview-mode
-                       meghanada
                        neotree
                        pkg-info
                        popup
@@ -65,6 +62,7 @@
                        python-environment
                        queue
                        rainbow-delimiters
+                       rust-mode
                        slime
                        smartparens
                        smex
@@ -80,10 +78,11 @@
 ;; where we get our packages from
 (setq package-archives '(
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
                          ))
 
 (package-initialize)
+(setq package-enable-at-startup nil)
 
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
@@ -123,7 +122,13 @@
 (set-frame-font "Menlo 13" nil t)
 
 ;; do we want parens to match? depends on how I feel today
-;;(smartparens-global-mode 1)
+(smartparens-global-mode 1)
+
+;; don't save too much history
+(setq history-length 100)
+(put 'minibuffer-history 'history-length 50)
+(put 'evil-ex-history 'history-length 50)
+(put 'kill-ring 'history-length 25)
 
 ;; ido mode
 (require 'ido)
@@ -148,8 +153,10 @@
 (global-set-key [(meta x)] 'smex)
 
 ;; on the fly linting
-(require 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
+;; (require 'flycheck)
+;;(add-hook 'after-init-hook #'global-flycheck-mode)
+;; (add-to-list 'load-path "~/go/src/github.com/dougm/goflymake")
+;; (require 'go-flymake)
 
 ;;(require 'midnight)
 ;;(setq clean-buffer-list-delay-general 1)
@@ -286,6 +293,11 @@
 (very-evil-map [next] 'way-down)
 (very-evil-map [prior] 'way-up)
 
+;; fml my mac's down key is borked
+(very-evil-map "\C-d" 'way-down)
+(very-evil-map "\C-u" 'way-up)
+
+
 (defun iwb ()
   "indent whole buffer"
   (interactive)
@@ -349,6 +361,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-define-key 'normal flycheck-mode-map (kbd "<M-N>") 'flycheck-next-error)
 (very-evil-map "\M-P" 'flycheck-previous-error)
 (evil-define-key 'normal flycheck-mode-map (kbd "<M-N>") 'flycheck-previous-error)
+;; (very-evil-map "\M-N" 'flymake-goto-next-error)
+;; (very-evil-map "\M-P" 'flymake-goto-prev-error)
+
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
 ;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
@@ -395,7 +410,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; common lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (add-to-list 'auto-mode-alist '("\\.ros\\'" . slime-mode))
-(setq inferior-lisp-program "sbcl")
+(setq inferior-lisp-program "sbcl --noinform --no-linedit" )
 (setq slime-contribs '(slime-fancy))
 
 ;; racket scheme
@@ -409,27 +424,31 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
+;; to use for live preview in impatient-mode
+(defun markdown-filter (buffer)
+  (progn
+    (princ "<style type=\"text/css\">body{padding:2em;max-width:40em;}</style>")
+    (princ
+     (with-temp-buffer
+       (let ((tmpname (buffer-name)))
+         (set-buffer buffer)
+         (set-buffer (markdown tmpname)) ; the function markdown is in `markdown-mode.el'
+         (buffer-string)))
+     (current-buffer))))
+
+(defun markdown-preview-like-god ()
+  (interactive)
+  (impatient-mode 1)
+  (setq imp-user-filter #'markdown-filter)
+  (cl-incf imp-last-state)
+  (imp--notify-clients))
+
 ;; yaml/raml
 (add-to-list 'auto-mode-alist '("\\.raml$" . yaml-mode))
 (add-hook 'yaml-mode-hook (lambda () (setq tab-width 2)))
 
 ;; js
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
-;; jsp
-(add-to-list 'auto-mode-alist '("\\.jsp$" . nxml-mode))
-
-;; clojure
-
-;; cider doesn't work with java 9 https://github.com/technomancy/leiningen/issues/2149
-(setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home")
-(add-to-list 'auto-mode-alist '("\\.clj$" . clojure-mode))
-(add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
-(add-hook 'cider-mode-hook #'eldoc-mode)
-(setq nrepl-log-messages t)
-(eval-after-load 'flycheck '(flycheck-clojure-setup))
-(add-hook 'cider-mode-hook
-  (lambda () (setq next-error-function #'flycheck-next-error-function)))
 
 ;; indent in html/xml/templates
 (setq sgml-basic-offset 4)
@@ -440,8 +459,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (require 'py-isort)
 ;; https://gist.github.com/andialbrecht/1241830
 ;; (load-file "~/.emacs.d/python-flake8/python-flake8.el")
-
-
 ;; (setq jedi:complete-on-dot t)
 ;; (setq jedi:get-in-function-call-delay 200)
 
@@ -479,11 +496,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; json
 (setq json-reformat:pretty-string? t)
 
-;; js
-(add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
-
-;; golang
+;; go
 (require 'go-guru)
+(setq go-guru-scope ".")
 (setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
@@ -495,10 +510,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (add-hook 'before-save-hook 'gofmt-before-save)
         ;; go-guru highlight
         (go-guru-hl-identifier-mode)
+
+        (go-eldoc-setup)
         ;; megacheck makes my laptop start to melt
-        (add-to-list 'flycheck-disabled-checkers 'go-megacheck)
+        (setq flycheck-disabled-checkers '(go-test go-errcheck go-unconvert go-staticcheck))
+
         ;; godef shortcuts
         ;;(very-evil-map (kbd "s-b") 'godef-jump) ;; intellij muscle memory crutch
+        (if (not (string-match "go" compile-command))
+            (set (make-local-variable 'compile-command) "go test -v"))
 
         (very-evil-map (kbd "s-.") 'godef-jump)
         (very-evil-map (kbd "s-,") 'pop-tag-mark)))
@@ -509,40 +529,49 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
-;; java
-;; (require 'meghanada)
-;; (load-file "~/.emacs.d/flycheck-infer/flycheck-infer.el")
-
-;; (add-hook 'java-mode-hook
-;;           (lambda ()
-;;             ;; meghanada-mode on
-;;             (meghanada-mode t)
-;;             (add-hook 'before-save-hook 'meghanada-code-beautify-before-save)))
-;; eclim
-;; (require 'eclim)
-;; (require 'eclimd)
-;; (global-eclim-mode)
-(require 'auto-complete-config)
-(ac-config-default)
-;; (require 'ac-emacs-eclim-source)
-;; (ac-emacs-eclim-config)
-;; (custom-set-variables
-;;   '(eclim-eclipse-dirs '("/Applications/Eclipse.app/Contents/Eclipse/"))
-;;   '(eclim-executable "/Applications/Eclipse.app/Contents/Eclipse/eclim"))
-;; (require 'eclim)
-;; (setq eclimd-autostart t)
-;; (global-eclim-mode)
 
 ;; rust
-(with-eval-after-load 'rust-mode
-  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-
-(add-to-list 'auto-mode-alist '("\\.md$" . jekyll-markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.html" . jekyll-html-mode))
+;; (use-package rustic)
+;; (with-eval-after-load 'rust-mode
+;;   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+;; (add-hook 'rust-mode-hook
+;;           (lambda () (setq indent-tabs-mode nil)))
+(setq rust-format-on-save t)
+;; (setq rustic-format-on-save t)
+;; (setq rustic-compile-command "cargo build")
 
 ;;;;;;;;;;;;;;;;;;;;;; completion
-(require 'company)
+;; ???
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+
+;; (require 'company)
+
+(use-package flycheck
+  :hook (prog-mode . flycheck-mode))
+
+(use-package company
+  :hook (prog-mode . company-mode)
+  :config (setq company-tooltip-align-annotations t)
+          (setq company-minimum-prefix-length 1))
 (require 'company-go)
+
+;; (use-package lsp-mode
+;;   :commands lsp)
+
+(use-package lsp-ui)
+
+(use-package toml-mode)
+
+(use-package rust-mode
+  :hook (rust-mode . lsp))
+
+;; Add keybindings for interacting with Cargo
+(use-package cargo
+  :hook (rust-mode . cargo-minor-mode))
+
+(use-package flycheck-rust
+  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;; (add-hook 'after-init-hook 'global-company-mode)
 (defun indent-or-complete ()
@@ -560,9 +589,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key evil-insert-state-map [tab] 'indent-or-complete)
 ;; (define-key evil-insert-state-map [tab] 'company-complete)
 ;; (define-key evil-insert-state-map [C-tab] 'indent-for-tab-command)
-
-;; TODO fuck around with hippie-expand, seems promising
-(global-set-key "\M-/" 'hippie-expand)
 
 
 ;;;;;;;;;;;;;; utility
@@ -628,6 +654,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
       (error "No number at point"))
   (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
 
+(defun oops-that-might-error ()
+  (interactive)
+  (back-to-indentation)
+  (insert "if err := ")
+  (end-of-line)
+  (insert "; err != nil {\n // do something \n}")
+  (indent-for-tab-command)
+  (forward-line -1)
+  (indent-for-tab-command))
 
 
 ;;;;;;;;;;;;; tidyness
@@ -655,8 +690,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  '(neo-window-fixed-size nil)
  '(neo-window-width 30)
  '(package-selected-packages
-   (quote
-    (evil-magit godoctor column-enforce-mode projectile all-the-icons neotree go-rename go-guru ## racket-mode go-autocomplete company-jedi exec-path-from-shell yaml-mode thrift solarized-theme smex smartparens slime rust-mode rjsx-mode rainbow-delimiters py-isort protobuf-mode powerline meghanada markdown-preview-mode magit lusty-explorer json-mode jinja2-mode jekyll-modes jedi ido-vertical-mode hy-mode graphviz-dot-mode flycheck-rust flycheck-clojure flx-ido evil-surround evil-nerd-commenter erlang company-go column-marker))))
+   '(cargo flycheck-rust toml-mode lsp-ui lsp-mode rust-mode rustic use-package impatient-mode jedi-core go-eldoc terraform-mode jedi-direx flycheck evil-magit godoctor column-enforce-mode projectile all-the-icons neotree go-rename go-guru go-autocomplete company-jedi exec-path-from-shell yaml-mode solarized-theme smex smartparens slime rainbow-delimiters py-isort protobuf-mode powerline markdown-preview-mode magit lusty-explorer json-mode jedi ido-vertical-mode graphviz-dot-mode flx-ido evil-surround evil-nerd-commenter company-go column-marker)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

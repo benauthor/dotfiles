@@ -14,4 +14,8 @@ alias diff='git diff --no-index'
 # go
 alias gco='go test -coverprofile=coverage.out && go tool cover -html=coverage.out'
 
-alias cl='rlwrap sbcl'
+#alias cl='rlwrap sbcl'
+
+kssh() {
+    kubectl exec $1 -it -c toolbox -- /bin/bash
+}
