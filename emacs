@@ -41,12 +41,9 @@
                        graphviz-dot-mode
                        ido-vertical-mode
                        impatient-mode
-                       jedi
                        json-mode
                        json-reformat
                        json-snatcher
-                       lsp-mode
-                       lsp-ui
                        lusty-explorer
                        macrostep
                        magit
@@ -63,7 +60,6 @@
                        queue
                        rainbow-delimiters
                        rust-mode
-                       slime
                        smartparens
                        smex
                        solarized-theme
@@ -122,7 +118,7 @@
 (set-frame-font "Menlo 13" nil t)
 
 ;; do we want parens to match? depends on how I feel today
-(smartparens-global-mode 1)
+;; (smartparens-global-mode 1)
 
 ;; don't save too much history
 (setq history-length 100)
@@ -288,6 +284,14 @@
   (define-key evil-insert-state-map keys func)
   (define-key evil-visual-state-map keys func))
 
+
+(defun very-local-map (keys func)
+  "define a buffer-local keybinding for all evil modes"
+  (define-key evil-normal-state-local-map keys func)
+  (define-key evil-insert-state-local-map keys func)
+  (define-key evil-visual-state-local-map keys func))
+
+
 (defun way-down () (interactive) (evil-next-line 15))
 (defun way-up () (interactive) (evil-previous-line 15))
 (very-evil-map [next] 'way-down)
@@ -364,11 +368,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (very-evil-map "\M-N" 'flymake-goto-next-error)
 ;; (very-evil-map "\M-P" 'flymake-goto-prev-error)
 
-;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
-;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
-;; (evil-define-key 'insert slime-repl-map (kbd "<M-n>") 'slime-repl-backward-input)
-;; (evil-define-key 'insert slime-repl-map (kbd "<M-p>") 'slime-repl-forward-input)
-
 ;; buffer switching
 (global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
 (global-set-key (kbd "C-k") 'evil-switch-to-windows-last-buffer)
@@ -407,15 +406,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;;;;;;;;;;;;;; languages
 
-;; common lisp
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; (add-to-list 'auto-mode-alist '("\\.ros\\'" . slime-mode))
-(setq inferior-lisp-program "sbcl --noinform --no-linedit" )
-(setq slime-contribs '(slime-fancy))
-
-;; racket scheme
-(setq racket-program "/Applications/Racket v6.12/bin/racket")
-
 ;; Vagrant is ruby
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
 
@@ -447,9 +437,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.raml$" . yaml-mode))
 (add-hook 'yaml-mode-hook (lambda () (setq tab-width 2)))
 
-;; js
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
 ;; indent in html/xml/templates
 (setq sgml-basic-offset 4)
 ;; might need to add this to a hook
@@ -457,10 +444,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; python
 (require 'py-isort)
-;; https://gist.github.com/andialbrecht/1241830
-;; (load-file "~/.emacs.d/python-flake8/python-flake8.el")
-;; (setq jedi:complete-on-dot t)
-;; (setq jedi:get-in-function-call-delay 200)
 
 (defun insert-pdb-trace ()
   "Why spend your whole life typing?"
@@ -472,21 +455,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (lambda ()
             (progn
               (setq tab-width 4)
-              (jedi:setup)
               (setq flycheck-python-pylint-executable "/Library/Frameworks/Python.framework/Versions/3.7/bin/pylint")
               (setq flycheck-pylintrc "/Users/evan.bender/.pylintrc")
               (define-key evil-insert-state-map (kbd "RET") 'evil-ret)
-              (very-evil-map (kbd "C-x p") 'insert-pdb-trace)
-              (very-evil-map (kbd "s-b") 'jedi:goto-definition))))
-
-;; (add-hook 'python-mode-hook 'jedi:setup)
-;; (add-hook 'python-mode-hook
-;;           (lambda () (define-key evil-insert-state-map (kbd "RET") 'evil-ret)))
-;; (add-hook 'python-mode-hook
-;;           (lambda () (very-evil-map (kbd "C-x p") 'insert-pdb-trace)))
-;; (add-hook 'python-mode-hook
-;;           (lambda () (very-evil-map (kbd "s-b") 'jedi:goto-definition)))
-
+              (very-local-map (kbd "C-x p") 'insert-pdb-trace))))
 
 
 ;; c
@@ -497,8 +469,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq json-reformat:pretty-string? t)
 
 ;; go
-(require 'go-guru)
-(setq go-guru-scope ".")
 (setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
@@ -508,44 +478,46 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (setq tab-width 8 indent-tabs-mode 1)
         ;; always gofmt
         (add-hook 'before-save-hook 'gofmt-before-save)
-        ;; go-guru highlight
-        (go-guru-hl-identifier-mode)
-
         (go-eldoc-setup)
         ;; megacheck makes my laptop start to melt
         (setq flycheck-disabled-checkers '(go-test go-errcheck go-unconvert go-staticcheck))
 
-        ;; godef shortcuts
-        ;;(very-evil-map (kbd "s-b") 'godef-jump) ;; intellij muscle memory crutch
         (if (not (string-match "go" compile-command))
             (set (make-local-variable 'compile-command) "go test -v"))
 
-        (very-evil-map (kbd "s-.") 'godef-jump)
-        (very-evil-map (kbd "s-,") 'pop-tag-mark)))
+        ;; godef shortcuts
+        (very-local-map (kbd "s-.") 'godef-jump)
+        (very-local-map (kbd "s-,") 'pop-tag-mark)))
+
 
 (setenv "GOPATH" "/Users/evan.bender/go")
 (setenv "CGO_CXXFLAGS_ALLOW" "-lpthread")
-(add-to-list 'exec-path "/Users/evan.bender/go/bin")
+;; (add-to-list 'exec-path "/Users/evan.bender/go/bin")
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
 
 ;; rust
-;; (use-package rustic)
-;; (with-eval-after-load 'rust-mode
-;;   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-;; (add-hook 'rust-mode-hook
-;;           (lambda () (setq indent-tabs-mode nil)))
-(setq rust-format-on-save t)
-;; (setq rustic-format-on-save t)
-;; (setq rustic-compile-command "cargo build")
+(require 'toml-mode)
+(require 'rust-mode)
+(add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'racer-mode-hook #'eldoc-mode)
+(add-hook 'racer-mode-hook #'company-mode)
+(add-hook 'rust-mode-hook
+          (lambda ()
+            (setq indent-tabs-mode nil)
+            (setq rust-format-on-save t)
+            (setq rust-rustfmt-bin "rustfmt-nightly")
+            (setq flycheck-disabled-checkers '(rust-cargo))
+            (setq compile-command "echo disabled")
+            (very-local-map (kbd "s-.") 'racer-find-definition)
+            (very-local-map (kbd "s-,") 'pop-tag-mark)
+            (define-key evil-insert-state-local-map [tab] #'company-indent-or-complete-common)))
+;; EB TODO https://evil.readthedocs.io/en/latest/keymaps.html
+;; evil does have a buffer-local implementation
 
-;;;;;;;;;;;;;;;;;;;;;; completion
-;; ???
-;; (require 'auto-complete-config)
-;; (ac-config-default)
 
-;; (require 'company)
+
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode))
@@ -556,22 +528,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (setq company-minimum-prefix-length 1))
 (require 'company-go)
 
-;; (use-package lsp-mode
-;;   :commands lsp)
 
-(use-package lsp-ui)
-
-(use-package toml-mode)
-
-(use-package rust-mode
-  :hook (rust-mode . lsp))
-
-;; Add keybindings for interacting with Cargo
-(use-package cargo
-  :hook (rust-mode . cargo-minor-mode))
-
-(use-package flycheck-rust
-  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;; (add-hook 'after-init-hook 'global-company-mode)
 (defun indent-or-complete ()
@@ -586,7 +543,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
     (indent-for-tab-command)
     ))
-(define-key evil-insert-state-map [tab] 'indent-or-complete)
+;; (define-key evil-insert-state-map [tab] 'indent-or-complete)
 ;; (define-key evil-insert-state-map [tab] 'company-complete)
 ;; (define-key evil-insert-state-map [C-tab] 'indent-for-tab-command)
 
@@ -690,7 +647,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
  '(neo-window-fixed-size nil)
  '(neo-window-width 30)
  '(package-selected-packages
-   '(cargo flycheck-rust toml-mode lsp-ui lsp-mode rust-mode rustic use-package impatient-mode jedi-core go-eldoc terraform-mode jedi-direx flycheck evil-magit godoctor column-enforce-mode projectile all-the-icons neotree go-rename go-guru go-autocomplete company-jedi exec-path-from-shell yaml-mode solarized-theme smex smartparens slime rainbow-delimiters py-isort protobuf-mode powerline markdown-preview-mode magit lusty-explorer json-mode jedi ido-vertical-mode graphviz-dot-mode flx-ido evil-surround evil-nerd-commenter company-go column-marker)))
+   '(racer protobuf-mode toml-mode use-package impatient-mode go-eldoc terraform-mode flycheck evil-magit godoctor column-enforce-mode projectile all-the-icons neotree go-rename go-autocomplete exec-path-from-shell yaml-mode solarized-theme smex smartparens rainbow-delimiters py-isort powerline markdown-preview-mode magit lusty-explorer json-mode ido-vertical-mode graphviz-dot-mode flx-ido evil-surround evil-nerd-commenter company-go column-marker)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

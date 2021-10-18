@@ -119,7 +119,7 @@ export PATH=~/local/bin:$PATH
 export GOPATH=~/go
 export PATH=~/go/bin:$PATH
 export CGO_CXXFLAGS_ALLOW='-lpthread'
-source ~/.gimme/envs/go1.15.2.env
+source ~/.gimme/envs/go1.17.1.env
 
 # sweet inline plotting
 export ITERMPLOT=rv
@@ -166,3 +166,8 @@ load_ssh_session
 
 # added by ghcup
 source /Users/evan.bender/.ghcup/env
+
+# DIY docker-for-mac VM
+# export DOCKER_HOST=ssh://vagrant@dockerbox:2222 # /var/run/docker.sock
+# ssh-add -k /Users/evan.bender/dd/busly/.vagrant/machines/default/virtualbox/private_key
+# export DOCKER_BUILDKIT=1
