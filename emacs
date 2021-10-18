@@ -25,6 +25,7 @@
                        ctable
                        dash
                        deferred
+                       eglot
                        epc
                        epl
                        exec-path-from-shell
@@ -70,6 +71,7 @@
                        websocket
                        with-editor
                        yaml-mode))
+
 
 ;; where we get our packages from
 (setq package-archives '(
@@ -486,7 +488,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (set (make-local-variable 'compile-command) "go test -v"))
 
         ;; godef shortcuts
-        (very-local-map (kbd "s-.") 'godef-jump)
+        (very-local-map (kbd "s-.") 'xref-find-definitions)
         (very-local-map (kbd "s-,") 'pop-tag-mark)))
 
 
@@ -531,18 +533,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 ;; (add-hook 'after-init-hook 'global-company-mode)
-(defun indent-or-complete ()
-  "Complete if point is at end of a word, otherwise indent line."
-  (interactive)
-  (if (looking-at "\\>")
-      ;;(dabbrev-expand nil)
-      (hippie-expand nil)
-      ;;(completion-at-point)
-      ;;(company-complete)
-      ;;(ac-complete nil)
+;; (defun indent-or-complete ()
+;;   "Complete if point is at end of a word, otherwise indent line."
+;;   (interactive)
+;;   (if (looking-at "\\>")
+;;       ;;(dabbrev-expand nil)
+;;       (hippie-expand nil)
+;;       ;;(completion-at-point)
+;;       ;;(company-complete)
+;;       ;;(ac-complete nil)
 
-    (indent-for-tab-command)
-    ))
+;;     (indent-for-tab-command)
+;;     ))
 ;; (define-key evil-insert-state-map [tab] 'indent-or-complete)
 ;; (define-key evil-insert-state-map [tab] 'company-complete)
 ;; (define-key evil-insert-state-map [C-tab] 'indent-for-tab-command)
@@ -638,19 +640,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       buffer)))
 (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
 
-;; fun times
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(neo-window-fixed-size nil)
- '(neo-window-width 30)
- '(package-selected-packages
-   '(racer protobuf-mode toml-mode use-package impatient-mode go-eldoc terraform-mode flycheck evil-magit godoctor column-enforce-mode projectile all-the-icons neotree go-rename go-autocomplete exec-path-from-shell yaml-mode solarized-theme smex smartparens rainbow-delimiters py-isort powerline markdown-preview-mode magit lusty-explorer json-mode ido-vertical-mode graphviz-dot-mode flx-ido evil-surround evil-nerd-commenter company-go column-marker)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+;; emacs, please don't put customizations noise here!
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
