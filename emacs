@@ -17,7 +17,6 @@
    packages))
 
 (setq packages-i-use `(async
-                       auto-complete
                        column-enforce-mode
                        company
                        company-go
@@ -35,7 +34,6 @@
                        evil-surround
                        flx
                        flx-ido
-                       flycheck
                        git-commit
                        goto-chg
                        godoctor
@@ -151,7 +149,6 @@
 (global-set-key [(meta x)] 'smex)
 
 ;; on the fly linting
-;; (require 'flycheck)
 ;;(add-hook 'after-init-hook #'global-flycheck-mode)
 ;; (add-to-list 'load-path "~/go/src/github.com/dougm/goflymake")
 ;; (require 'go-flymake)
@@ -457,8 +454,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (lambda ()
             (progn
               (setq tab-width 4)
-              (setq flycheck-python-pylint-executable "/Library/Frameworks/Python.framework/Versions/3.7/bin/pylint")
-              (setq flycheck-pylintrc "/Users/evan.bender/.pylintrc")
+              ;; (setq flycheck-python-pylint-executable "/Library/Frameworks/Python.framework/Versions/3.7/bin/pylint")
+              ;; (setq flycheck-pylintrc "/Users/evan.bender/.pylintrc")
               (define-key evil-insert-state-map (kbd "RET") 'evil-ret)
               (very-local-map (kbd "C-x p") 'insert-pdb-trace))))
 
@@ -470,12 +467,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; json
 (setq json-reformat:pretty-string? t)
 
+;; (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
+
 ;; go
 (setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
-        (set (make-local-variable 'company-backends) '(company-go))
-        (company-mode)
+        ;; (eglot-ensure)
+        ;; completion
+        ;; https://emacs.stackexchange.com/questions/64038/how-to-use-multiple-backends-in-priority-for-company-mode
+        (set (make-local-variable 'company-backends) '((company-go company-dabbrev-code company-keywords)))
+
+        (define-key evil-insert-state-local-map [tab] #'company-indent-or-complete-common)
         ;; wide tab
         (setq tab-width 8 indent-tabs-mode 1)
         ;; always gofmt
@@ -487,8 +490,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (if (not (string-match "go" compile-command))
             (set (make-local-variable 'compile-command) "go test -v"))
 
+
         ;; godef shortcuts
-        (very-local-map (kbd "s-.") 'xref-find-definitions)
+        ;;(very-local-map (kbd "s-.") 'xref-find-definitions)
+        (very-local-map (kbd "s-.") 'godef-jump)
         (very-local-map (kbd "s-,") 'pop-tag-mark)))
 
 
@@ -502,15 +507,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; rust
 (require 'toml-mode)
 (require 'rust-mode)
+;; (add-to-list 'eglot-server-programs '(rust-mode . "rust-analyzer"))
 (add-hook 'rust-mode-hook #'racer-mode)
 (add-hook 'racer-mode-hook #'eldoc-mode)
-(add-hook 'racer-mode-hook #'company-mode)
 (add-hook 'rust-mode-hook
           (lambda ()
             (setq indent-tabs-mode nil)
             (setq rust-format-on-save t)
             (setq rust-rustfmt-bin "rustfmt-nightly")
-            (setq flycheck-disabled-checkers '(rust-cargo))
+            ;; (setq flycheck-disabled-checkers '(rust-cargo))
             (setq compile-command "echo disabled")
             (very-local-map (kbd "s-.") 'racer-find-definition)
             (very-local-map (kbd "s-,") 'pop-tag-mark)
@@ -526,28 +531,31 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package company
   :hook (prog-mode . company-mode)
-  :config (setq company-tooltip-align-annotations t)
-          (setq company-minimum-prefix-length 1))
-(require 'company-go)
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1))
+(use-package company-go
+  :config
+  (add-to-list 'company-backends 'company-go))
 
 
 
-;; (add-hook 'after-init-hook 'global-company-mode)
-;; (defun indent-or-complete ()
-;;   "Complete if point is at end of a word, otherwise indent line."
-;;   (interactive)
-;;   (if (looking-at "\\>")
-;;       ;;(dabbrev-expand nil)
-;;       (hippie-expand nil)
-;;       ;;(completion-at-point)
-;;       ;;(company-complete)
-;;       ;;(ac-complete nil)
 
-;;     (indent-for-tab-command)
-;;     ))
-;; (define-key evil-insert-state-map [tab] 'indent-or-complete)
-;; (define-key evil-insert-state-map [tab] 'company-complete)
-;; (define-key evil-insert-state-map [C-tab] 'indent-for-tab-command)
+(defun indent-or-complete ()
+  "Complete if point is at end of a word, otherwise indent line."
+  (interactive)
+  (if (looking-at "\\>")
+      ;;(dabbrev-expand nil)
+      (hippie-expand nil)
+      ;;(completion-at-point)
+      ;;(company-complete)
+      ;;(ac-complete nil)
+
+    (indent-for-tab-command)
+    ))
+;;(define-key evil-insert-state-map [tab] 'indent-or-complete)
+;;(define-key evil-insert-state-map [tab] 'company-complete)
+;; (define-key evil-insert-state-map [C-tab] 'company-complete)
 
 
 ;;;;;;;;;;;;;; utility
