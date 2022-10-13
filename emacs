@@ -16,59 +16,34 @@
          package)))
    packages))
 
-(setq packages-i-use `(async
-                       column-enforce-mode
-                       company
-                       company-go
-                       concurrent
-                       ctable
-                       dash
-                       deferred
-                       eglot
-                       epc
-                       epl
-                       exec-path-from-shell
-                       evil
-                       evil-magit
-                       evil-nerd-commenter
-                       evil-surround
-                       flx
-                       flx-ido
-                       git-commit
-                       goto-chg
-                       godoctor
-                       graphviz-dot-mode
-                       ido-vertical-mode
-                       impatient-mode
-                       json-mode
-                       json-reformat
-                       json-snatcher
-                       lusty-explorer
-                       macrostep
-                       magit
-                       magit-popup
-                       markdown-mode
-                       markdown-preview-mode
-                       neotree
-                       pkg-info
-                       popup
-                       powerline
-                       protobuf-mode
-                       py-isort
-                       python-environment
-                       queue
-                       rainbow-delimiters
-                       rust-mode
-                       smartparens
-                       smex
-                       solarized-theme
-                       spinner
-                       undo-tree
-                       uuidgen
-                       web-server
-                       websocket
-                       with-editor
-                       yaml-mode))
+(setq packages-i-use `(
+                       column-enforce-mode ;; reminder at 80
+                       company             ;; completion
+                       company-go          ;;   for go
+                       evil                ;; vi mode
+                       evil-nerd-commenter ;; fast block commenting
+                       evil-surround       ;; surround.vim
+                       exec-path-from-shell ;; path mangling
+                       flx-ido             ;; fuzzy matching in ido mode
+                       flycheck            ;; inline code checks
+                       graphviz-dot-mode   ;; dot file mode
+                       ido-vertical-mode   ;; ido mode look nicer
+                       json-mode           ;; json mode
+                       ;; lsp-mode            ;; language server for many langs
+                       magit               ;; git history browsing
+                       markdown-mode       ;; markdown mode
+                       neotree             ;; left-sidebare file nav
+                       projectile          ;; it understands projects
+                       protobuf-mode       ;; proto mode
+                       rainbow-delimiters  ;; easier to see stacks of parens
+                       racer               ;; lighter-weight-than-lsp rust completion and navigation
+                       ;; rustic              ;; rust mode extended
+                       smartparens         ;; magic paren matching
+                       smex                ;; ido for M-x
+                       solarized-theme     ;; best color scheme
+                       yaml-mode           ;; yaml mode
+                       yasnippet           ;; snippets
+                       ))
 
 
 ;; where we get our packages from
@@ -76,6 +51,7 @@
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ))
+
 
 (package-initialize)
 (setq package-enable-at-startup nil)
@@ -90,7 +66,7 @@
 
 ;; recompile .emacs.d on open
 ;; sometimes this is useful. it just takes a while -- usually keep it commented
-;; (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
+(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
 (load-theme 'solarized-light t)
 ;; (load-theme 'solarized-dark t)
@@ -107,8 +83,6 @@
 (evil-mode 1)
 (require 'evil-surround)
 (global-evil-surround-mode 1)
-;; play well with magit
-(require 'evil-magit)
 
 ;; colooors
 (require 'rainbow-delimiters)
@@ -118,7 +92,7 @@
 (set-frame-font "Menlo 13" nil t)
 
 ;; do we want parens to match? depends on how I feel today
-;; (smartparens-global-mode 1)
+;;(smartparens-global-mode 1)
 
 ;; don't save too much history
 (setq history-length 100)
@@ -160,10 +134,6 @@
 (global-column-enforce-mode t)
 ;;(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
 
-;; sort of mimic vim's powerline
-(require 'powerline)
-(powerline-default-theme)
-
 ;; window navigation
 (winner-mode 1)
 
@@ -176,7 +146,7 @@
 ;; file tree navigation
 (require 'neotree)
 (setq neo-smart-open t)
-;(global-set-key [f8] 'neotree-toggle)
+;; (global-set-key [f8] 'neotree-toggle)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
 (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
@@ -242,16 +212,6 @@
 (setq vc-make-backup-files t)
 (setq create-lockfiles nil)
 
-;; put stuff on path so we can use it
-;; (defun set-exec-path-from-shell-PATH ()
-;;   "Sets the exec-path to the same value used by the user shell"
-;;   (let ((path-from-shell
-;;          (replace-regexp-in-string
-;;           "[[:space:]\n]*$" ""
-;;           (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
-;;     (setenv "PATH" path-from-shell)
-;;     (setq exec-path (split-string path-from-shell path-separator))))
-;; (set-exec-path-from-shell-PATH)
 
 ;; turn off the welcome screen
 (setq inhibit-startup-message t)
@@ -405,6 +365,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;;;;;;;;;;;;;; languages
 
+(use-package flycheck
+;;  :hook (prog-mode . flycheck-mode))
+  :hook (go-mode . flycheck-mode))
+
+(use-package company
+  :hook (prog-mode . company-mode)
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 2)
+  (setq company-idle-delay 5))
+
 ;; Vagrant is ruby
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
 
@@ -412,25 +383,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
-;; to use for live preview in impatient-mode
-(defun markdown-filter (buffer)
-  (progn
-    (princ "<style type=\"text/css\">body{padding:2em;max-width:40em;}</style>")
-    (princ
-     (with-temp-buffer
-       (let ((tmpname (buffer-name)))
-         (set-buffer buffer)
-         (set-buffer (markdown tmpname)) ; the function markdown is in `markdown-mode.el'
-         (buffer-string)))
-     (current-buffer))))
-
-(defun markdown-preview-like-god ()
-  (interactive)
-  (impatient-mode 1)
-  (setq imp-user-filter #'markdown-filter)
-  (cl-incf imp-last-state)
-  (imp--notify-clients))
 
 ;; yaml/raml
 (add-to-list 'auto-mode-alist '("\\.raml$" . yaml-mode))
@@ -441,39 +393,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; might need to add this to a hook
 (setq nxml-child-indent 4)
 
-;; python
-(require 'py-isort)
-
-(defun insert-pdb-trace ()
-  "Why spend your whole life typing?"
-  (interactive)
-  (insert "import ipdb;ipdb.set_trace()"))
-  ;; (insert "import pudb;pudb.set_trace()"))
-
-(add-hook 'python-mode-hook
-          (lambda ()
-            (progn
-              (setq tab-width 4)
-              ;; (setq flycheck-python-pylint-executable "/Library/Frameworks/Python.framework/Versions/3.7/bin/pylint")
-              ;; (setq flycheck-pylintrc "/Users/evan.bender/.pylintrc")
-              (define-key evil-insert-state-map (kbd "RET") 'evil-ret)
-              (very-local-map (kbd "C-x p") 'insert-pdb-trace))))
-
-
-;; c
-(setq c-default-style "linux"
-      c-basic-offset 4)
-
-;; json
-(setq json-reformat:pretty-string? t)
-
-;; (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
-
 ;; go
+(use-package company-go
+  :config
+  (add-to-list 'company-backends 'company-go))
 (setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
-        ;; (eglot-ensure)
         ;; completion
         ;; https://emacs.stackexchange.com/questions/64038/how-to-use-multiple-backends-in-priority-for-company-mode
         (set (make-local-variable 'company-backends) '((company-go company-dabbrev-code company-keywords)))
@@ -503,15 +429,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))
 
-
 ;; rust
+;; (require 'lsp-mode)
+;; (add-hook 'rust-mode-hook #'lsp)
 (require 'toml-mode)
 (require 'rust-mode)
-;; (add-to-list 'eglot-server-programs '(rust-mode . "rust-analyzer"))
 (add-hook 'rust-mode-hook #'racer-mode)
 (add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'rust-mode-hook
           (lambda ()
+            ;; (setq rustic-lsp-setup-p nil)
+            ;; (setq rustic-lsp-client nil)
             (setq indent-tabs-mode nil)
             (setq rust-format-on-save t)
             (setq rust-rustfmt-bin "rustfmt-nightly")
@@ -523,21 +451,55 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; EB TODO https://evil.readthedocs.io/en/latest/keymaps.html
 ;; evil does have a buffer-local implementation
 
+;; rust attempt II
+;; (use-package rustic
+;;   :ensure
+;;   :bind (:map rustic-mode-map
+;;               ("M-j" . lsp-ui-imenu)
+;;               ("M-?" . lsp-find-references)
+;;               ("C-c C-c l" . flycheck-list-errors)
+;;               ("C-c C-c a" . lsp-execute-code-action)
+;;               ("C-c C-c r" . lsp-rename)
+;;               ("C-c C-c q" . lsp-workspace-restart)
+;;               ("C-c C-c Q" . lsp-workspace-shutdown)
+;;               ("C-c C-c s" . lsp-rust-analyzer-status))
+;;   :config
+;;   ;; uncomment for less flashiness
+;;   ;; (setq lsp-eldoc-hook nil)
+;;   ;; (setq lsp-enable-symbol-highlighting nil)
+;;   ;; (setq lsp-signature-auto-activate nil)
 
+;;   ;; comment to disable rustfmt on save
+;;   (setq rustic-format-on-save t)
+;;   (setq rustic-rustfmt-bin "rustfmt-nightly"))
+;;   ;;(add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
 
+;; (use-package lsp-mode
+;;   :ensure
+;;   :commands lsp
+;;   :custom
+;;   ;; what to use when checking on-save. "check" is default, I prefer clippy
+;;   (lsp-rust-analyzer-cargo-watch-command "clippy")
+;;   (lsp-eldoc-render-all t)
+;;   (lsp-idle-delay 0.6)
+;;   ;; enable / disable the hints as you prefer:
+;;   (lsp-rust-analyzer-server-display-inlay-hints t)
+;;   (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+;;   (lsp-rust-analyzer-display-chaining-hints t)
+;;   (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+;;   (lsp-rust-analyzer-display-closure-return-type-hints t)
+;;   (lsp-rust-analyzer-display-parameter-hints nil)
+;;   (lsp-rust-analyzer-display-reborrow-hints nil)
+;;   :config
+;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
-(use-package flycheck
-  :hook (prog-mode . flycheck-mode))
-
-(use-package company
-  :hook (prog-mode . company-mode)
-  :config
-  (setq company-tooltip-align-annotations t)
-  (setq company-minimum-prefix-length 1))
-(use-package company-go
-  :config
-  (add-to-list 'company-backends 'company-go))
-
+;; (use-package lsp-ui
+;;   :ensure
+;;   :commands lsp-ui-mode
+;;   :custom
+;;   (lsp-ui-peek-always-show t)
+;;   (lsp-ui-sideline-show-hover t)
+;;   (lsp-ui-doc-enable nil))
 
 
 

@@ -119,7 +119,7 @@ export PATH=~/local/bin:$PATH
 export GOPATH=~/go
 export PATH=~/go/bin:$PATH
 export CGO_CXXFLAGS_ALLOW='-lpthread'
-source ~/.gimme/envs/go1.17.1.env
+source ~/.gimme/envs/go1.18.5.env
 
 # sweet inline plotting
 export ITERMPLOT=rv
@@ -162,7 +162,7 @@ load_ssh_session() {
     fi
 }
 
-load_ssh_session
+# load_ssh_session
 
 # added by ghcup
 source /Users/evan.bender/.ghcup/env
