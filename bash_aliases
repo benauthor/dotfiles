@@ -16,6 +16,13 @@ alias gco='go test -coverprofile=coverage.out && go tool cover -html=coverage.ou
 
 #alias cl='rlwrap sbcl'
 
+# k8s
+alias k='kubectl'
+alias kcc='kubectl config current-context'
+
 kssh() {
-    kubectl exec $1 -it -c toolbox -- /bin/bash
+    local pod=$1
+    shift
+    local cmd="${@:-/bin/bash}"
+    kubectl exec $pod -it -c toolbox -- $cmd
 }

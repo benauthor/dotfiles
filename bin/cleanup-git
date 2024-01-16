@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo merged branches
+echo ---------------
+for b in $(git branch --merged | grep -v "\*"); do
+    read -p "Do you want to delete $b? " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        echo
+        echo "Deleting $b!"
+        git branch -d "$b"
+    else
+        echo "No action taken."
+    fi
+done

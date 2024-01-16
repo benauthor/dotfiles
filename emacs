@@ -26,10 +26,11 @@
                        exec-path-from-shell ;; path mangling
                        flx-ido             ;; fuzzy matching in ido mode
                        flycheck            ;; inline code checks
+                       ;;go-eldoc-mode       ;; eldoc for go
                        graphviz-dot-mode   ;; dot file mode
                        ido-vertical-mode   ;; ido mode look nicer
                        json-mode           ;; json mode
-                       ;; lsp-mode            ;; language server for many langs
+                       lsp-mode            ;; language server for many langs
                        magit               ;; git history browsing
                        markdown-mode       ;; markdown mode
                        neotree             ;; left-sidebare file nav
@@ -41,6 +42,9 @@
                        smartparens         ;; magic paren matching
                        smex                ;; ido for M-x
                        solarized-theme     ;; best color scheme
+                       toml-mode           ;; toml mode
+                       undo-tree           ;; navigate undo history
+                       use-package         ;; fancy way to load packages
                        yaml-mode           ;; yaml mode
                        yasnippet           ;; snippets
                        ))
@@ -83,6 +87,8 @@
 (evil-mode 1)
 (require 'evil-surround)
 (global-evil-surround-mode 1)
+(global-undo-tree-mode)
+(evil-set-undo-system 'undo-tree)
 
 ;; colooors
 (require 'rainbow-delimiters)
@@ -146,6 +152,7 @@
 ;; file tree navigation
 (require 'neotree)
 (setq neo-smart-open t)
+(setq neo-window-width 55)
 ;; (global-set-key [f8] 'neotree-toggle)
 (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
@@ -394,10 +401,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (setq nxml-child-indent 4)
 
 ;; go
-(use-package company-go
-  :config
-  (add-to-list 'company-backends 'company-go))
-(setq gofmt-command "goimports")
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :custom
+  (lsp-enable-file-watchers nil)
+  :hook
+  ((go-mode) . lsp))
+;; To set the garbage collection threshold to high (100 MB) since LSP client-server communication generates a lot of output/garbage
+(setq gc-cons-threshold 100000000)
+;; To increase the amount of data Emacs reads from a process
+(setq read-process-output-max (* 1024 1024))
+
+(setq exec-path (append exec-path '("/Users/evan.bender/go/bin/")))
+;; (use-package company-go
+;;   :config
+;;   (add-to-list 'company-backends 'company-go))
+;;(setq gofmt-command "goimports")
 (add-hook 'go-mode-hook
       (lambda ()
         ;; completion
@@ -409,7 +428,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (setq tab-width 8 indent-tabs-mode 1)
         ;; always gofmt
         (add-hook 'before-save-hook 'gofmt-before-save)
-        (go-eldoc-setup)
+        ;; (go-eldoc-setup)
         ;; megacheck makes my laptop start to melt
         (setq flycheck-disabled-checkers '(go-test go-errcheck go-unconvert go-staticcheck))
 
@@ -423,8 +442,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
         (very-local-map (kbd "s-,") 'pop-tag-mark)))
 
 
-(setenv "GOPATH" "/Users/evan.bender/go")
-(setenv "CGO_CXXFLAGS_ALLOW" "-lpthread")
+;; (setenv "GOPATH" "/Users/evan.bender/go")
+(setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/lib/pkgconfig:/opt/homebrew/opt/openssl/lib/pkgconfig")
+;; (setenv "CPPFLAGS" "-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/gperftools/include -I/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/include -I/opt/homebrew/Cellar/foundationdb-headers@6.2.30/6.2.30/include")
+(setenv "CGO_CFLAGS_ALLOW" "-ltcmalloc")
+(setenv "CGO_CXXFLAGS_ALLOW" "-lpthread|-ltcmalloc")
+(setenv "CGO_CPPFLAGS" "-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/gperftools/include -I/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/include -I/opt/homebrew/Cellar/foundationdb-headers@6.2.30/6.2.30/include -DCMAKE_EXE_LINKER_FLAG")
+;; (setenv "CPATH" "/opt/homebrew/include")
+;; (setenv "LIBRARY_PATH" "/opt/homebrew/lib")
+
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (progn
+              (setq tab-width 4)
+              (define-key evil-insert-state-map (kbd "RET") 'evil-ret)
+              (define-key evil-insert-state-local-map [tab] #'company-indent-or-complete-common))))
+
+
+
 ;; (add-to-list 'exec-path "/Users/evan.bender/go/bin")
 ;; (add-hook 'before-save-hook 'gofmt-before-save)
 ;; (add-hook 'go-mode-hook (lambda () (setq tab-width 8 indent-tabs-mode 1)))

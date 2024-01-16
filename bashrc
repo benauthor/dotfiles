@@ -115,11 +115,26 @@ eval $( gpg-agent --daemon 2>/dev/null )
 # misc local utils
 export PATH=~/local/bin:$PATH
 
+# find brew installed dependencies
+# XXX this is a mishmash of advice from a couple different sources
+# export LD_LIBRARY_PATH="/opt/homebrew/opt/openssl@3/lib"
+# export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/lib"
+# export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/gperftools/include -I/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/include -I/opt/homebrew/Cellar/foundationdb-headers@6.2.30/6.2.30/include"
+
+# export CPATH="/opt/homebrew/include:$CPATH"
+# export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"
+export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/lib/pkgconfig:/opt/homebrew/opt/openssl/lib/pkgconfig"
+
+
 # go
 export GOPATH=~/go
 export PATH=~/go/bin:$PATH
-export CGO_CXXFLAGS_ALLOW='-lpthread'
-source ~/.gimme/envs/go1.18.5.env
+export CGO_CXXFLAGS_ALLOW='-lpthread|-ltcmalloc'
+export CGO_CFLAGS_ALLOW='-ltcmalloc'
+export CGO_CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/gperftools/include -I/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/include -I/opt/homebrew/Cellar/foundationdb-headers@6.2.30/6.2.30/include -DCMAKE_EXE_LINKER_FLAG"
+
+
+source ~/.gimme/envs/go1.21.1.env
 
 # sweet inline plotting
 export ITERMPLOT=rv
@@ -164,10 +179,10 @@ load_ssh_session() {
 
 # load_ssh_session
 
-# added by ghcup
-source /Users/evan.bender/.ghcup/env
+. "$HOME/.cargo/env"
 
-# DIY docker-for-mac VM
-# export DOCKER_HOST=ssh://vagrant@dockerbox:2222 # /var/run/docker.sock
-# ssh-add -k /Users/evan.bender/dd/busly/.vagrant/machines/default/virtualbox/private_key
-# export DOCKER_BUILDKIT=1
+# put various bins on path
+export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
+export PATH="/Users/evan.bender/bin:$PATH"
+export PATH="/Users/evan.bender/dotfiles/bin:$PATH"
+export PATH="/Users/evan.bender/.krew/bin:$PATH"
