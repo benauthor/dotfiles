@@ -8,3 +8,8 @@ __pycache__/
 .cache
 EBTODO.md
 ~undo-tree~
+.letta
+.claude
+.bits
+testbucket/
+.idea

@@ -26,3 +26,5 @@ kssh() {
     local cmd="${@:-/bin/bash}"
     kubectl exec $pod -it -c toolbox -- $cmd
 }
+
+alias watchpods='watch -n5 kubectl get pods'

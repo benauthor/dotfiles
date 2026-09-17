@@ -39,9 +39,6 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-   #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
@@ -96,49 +93,28 @@ __prompt_command() {
 }
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
-#export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
-#export JAVA_9_HOME=$(/usr/libexec/java_home -v1.9 2> /dev/null)
-
-#alias java8='export JAVA_HOME=$JAVA_8_HOME'
-#alias java9='export JAVA_HOME=$JAVA_9_HOME'
-
-#default java8
-#export JAVA_HOME=$JAVA_9_HOME
-
 # our version of gpg doesn't start a new agent every
 # time, so this easy way is safe
 eval $( gpg-agent --daemon 2>/dev/null )
 
-# added by travis gem
-[ -f /Users/bender/.travis/travis.sh ] && source /Users/bender/.travis/travis.sh
-
 # misc local utils
 export PATH=~/local/bin:$PATH
 
-# find brew installed dependencies
-# XXX this is a mishmash of advice from a couple different sources
-# export LD_LIBRARY_PATH="/opt/homebrew/opt/openssl@3/lib"
-# export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/lib"
-# export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/gperftools/include -I/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/include -I/opt/homebrew/Cellar/foundationdb-headers@6.2.30/6.2.30/include"
-
-# export CPATH="/opt/homebrew/include:$CPATH"
-# export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"
-export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/lib/pkgconfig:/opt/homebrew/opt/openssl/lib/pkgconfig"
+# C/C++ path junk
+export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"
+export CPATH="/opt/homebrew/include:$CPATH"
 
 
 # go
 export GOPATH=~/go
 export PATH=~/go/bin:$PATH
-export CGO_CXXFLAGS_ALLOW='-lpthread|-ltcmalloc'
-export CGO_CFLAGS_ALLOW='-ltcmalloc'
-export CGO_CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/gperftools/include -I/opt/homebrew/Cellar/rocksdb@6.20.3/6.20.3/include -I/opt/homebrew/Cellar/foundationdb-headers@6.2.30/6.2.30/include -DCMAKE_EXE_LINKER_FLAG"
 
+# source ~/.gimme/envs/go1.26.7.env
+export GO111MODULE=auto
+export GONOSUMDB=github.com/DataDog,go.ddbuild.io
+export GOPRIVATE=
+export GOPROXY='https://depot-read-api-go.us1.ddbuild.io/magicmirror/magicmirror/@current/%7Chttps://depot-read-api-go.us1.ddbuild.io/magicmirror/magicmirror/@current/%7Chttps://depot-read-api-go.us1.ddbuild.io/magicmirror/testing/@current/'
 
-source ~/.gimme/envs/go1.21.1.env
-
-# sweet inline plotting
-export ITERMPLOT=rv
-export MPLBACKEND="module://itermplot"
 
 # include .bashrc_hidden if it exists
 # if i.e. I don't want to version control some secrets
@@ -150,39 +126,16 @@ fi
 # because I don't use flow control
 stty -ixon
 
-# running out of file handles???
-ulimit -S -n $((10240 * 2))
-
-
 export SSH_ENV="${HOME}/.ssh/environment"
-
-start_ssh_agent() {
-    echo "Initialising new SSH agent..."
-    ssh-agent -s | sed 's/^echo/#echo/' > "${SSH_ENV}"
-    echo succeeded
-    chmod 600 "${SSH_ENV}"
-    . "${SSH_ENV}" > /dev/null
-    ssh-add -k;
-}
-
-# Source SSH settings, if applicable
-load_ssh_session() {
-    if [ -f "${SSH_ENV}" ]; then
-        . "${SSH_ENV}" > /dev/null
-        ps aux ${SSH_AGENT_PID} | grep 'ssh-agent -s$' > /dev/null || {
-            start_ssh_agent;
-        }
-    else
-        start_ssh_agent;
-    fi
-}
-
-# load_ssh_session
 
 . "$HOME/.cargo/env"
 
 # put various bins on path
-export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
 export PATH="/Users/evan.bender/bin:$PATH"
 export PATH="/Users/evan.bender/dotfiles/bin:$PATH"
-export PATH="/Users/evan.bender/.krew/bin:$PATH"
+[ -f ~/.config/gitsign/include.sh ] && source ~/.config/gitsign/include.sh
+
+export PATH="$PATH:/Users/evan.bender/.local/bin"
+
+# Pi/mcp-cli user tools
+export PATH="$HOME/.pi/agent/bin:$PATH"

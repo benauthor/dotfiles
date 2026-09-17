@@ -29,6 +29,7 @@
                        ;;go-eldoc-mode       ;; eldoc for go
                        graphviz-dot-mode   ;; dot file mode
                        ido-vertical-mode   ;; ido mode look nicer
+                       jedi
                        json-mode           ;; json mode
                        lsp-mode            ;; language server for many langs
                        magit               ;; git history browsing
@@ -536,6 +537,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;   (lsp-ui-peek-always-show t)
 ;;   (lsp-ui-sideline-show-hover t)
 ;;   (lsp-ui-doc-enable nil))
+
+(setq lua-indent-level 2)
 
 
 
